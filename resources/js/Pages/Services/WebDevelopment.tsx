@@ -1,6 +1,12 @@
 import { Head } from "@inertiajs/react";
 import { SiteLayout, PageHero, SectionTitle, BookMeetingBar } from "@/components/site/SiteLayout";
 import devImg from "@/assets/web-dev.png";
+import workUftcTextile from "@/assets/work-uftc-textile.png";
+import workPanchagarhNews from "@/assets/work-panchagarh-news.png";
+import workArabianKhebso from "@/assets/work-arabian-khebso.png";
+import workKurigramCollege from "@/assets/work-kurigram-college.png";
+import workSavarCantonment from "@/assets/work-savar-cantonment.png";
+import workSwapnochariSchool from "@/assets/work-swapnochari-school.jpg";
 import { CheckCircle2 } from "lucide-react";
 
 const promises = [
@@ -32,13 +38,37 @@ const types = [
   "Laravel Web Development",
 ];
 
-const works = [
-  "Education Consultancy",
-  "Heavy Equipment Trading Agency",
-  "Online Grocery Ecommerce",
-  "Travel Booking Portal",
-  "Restaurant Ordering Site",
-  "Real Estate Listing",
+const recentWorksList = [
+  {
+    title: "United Fabrics & Textile Corp.",
+    category: "Corporate Textile Website",
+    image: workUftcTextile,
+  },
+  {
+    title: "Panchagarh News Portal",
+    category: "Online News Portal Website",
+    image: workPanchagarhNews,
+  },
+  {
+    title: "Arabian Khebso House",
+    category: "Restaurant Ordering Website",
+    image: workArabianKhebso,
+  },
+  {
+    title: "Savar Cantonment Public School & College",
+    category: "School & College Website",
+    image: workSavarCantonment,
+  },
+  {
+    title: "Swapnochari Ideal School & College",
+    category: "Educational Institution Website",
+    image: workSwapnochariSchool,
+  },
+  {
+    title: "Dept. of Accounting — Kurigram Govt. College",
+    category: "College Department Portal",
+    image: workKurigramCollege,
+  },
 ];
 
 export default function WebDevelopment() {
@@ -122,24 +152,37 @@ export default function WebDevelopment() {
         </div>
       </section>
 
-      <section className="py-20">
+      <section className="py-20 bg-slate-50/60">
         <div className="mx-auto max-w-7xl px-6">
           <SectionTitle kicker="Portfolio">Recent Works</SectionTitle>
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {works.map((w, i) => (
-              <article key={w} className="card-elevated overflow-hidden">
-                <div
-                  className="h-40"
-                  style={{
-                    backgroundImage: `linear-gradient(140deg, oklch(0.45 0.15 ${240 + i * 18}), oklch(0.68 0.14 ${200 + i * 20}))`,
-                  }}
-                />
-                <div className="p-5">
-                  <h3 className="text-sm font-bold text-brand-deep">{w}</h3>
-                  <p className="text-xs text-muted-foreground">Website Developed</p>
-                  <span className="mt-3 inline-block rounded bg-accent px-3 py-1 text-[11px] font-semibold text-accent-foreground">
+          <div className="mt-12 grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {recentWorksList.map((item, i) => (
+              <article
+                key={i}
+                className="group card-elevated overflow-hidden rounded-2xl bg-white border border-slate-200/80 shadow-md transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl flex flex-col justify-between"
+              >
+                <div className="relative overflow-hidden bg-slate-100 h-64 sm:h-72 border-b border-slate-100">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 flex items-end p-6">
+                    <span className="rounded-full bg-[#0B63E5] px-4 py-2 text-xs font-semibold text-white shadow-lg">
+                      View Demo Site
+                    </span>
+                  </div>
+                </div>
+                <div className="p-6 flex items-center justify-between gap-4">
+                  <div>
+                    <h3 className="font-bold text-base md:text-lg text-slate-900 group-hover:text-[#0B63E5] transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-1">{item.category}</p>
+                  </div>
+                  <button className="shrink-0 rounded-lg bg-primary/10 px-4 py-2 text-xs font-bold text-primary transition-colors group-hover:bg-primary group-hover:text-white">
                     View Demo
-                  </span>
+                  </button>
                 </div>
               </article>
             ))}

@@ -120,8 +120,8 @@ export default function DashboardLayout({ children, title }: Props) {
 
             <div className="flex items-center justify-between px-2 text-xs">
               <div className="truncate">
-                <p className="font-semibold text-foreground truncate">{user?.name || "Admin User"}</p>
-                <p className="text-[11px] text-muted-foreground truncate">{user?.email || "admin@amarschool.com"}</p>
+                <p className="font-semibold text-foreground truncate">{user?.name || "Shimul Admin"}</p>
+                <p className="text-[11px] text-muted-foreground truncate">{user?.email || "shimul.amarschool@gmail.com"}</p>
               </div>
               <button
                 onClick={handleLogout}

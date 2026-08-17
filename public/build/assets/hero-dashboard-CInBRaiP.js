@@ -1,1 +1,0 @@
-var e=`/build/assets/hero-dashboard-CPrmRgaC.png`;export{e as t};

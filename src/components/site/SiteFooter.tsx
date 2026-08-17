@@ -52,8 +52,12 @@ export function SiteFooter() {
                 Software Core Features
               </Link>
             </li>
+            <li>
+              <Link href="/privacy-policy" className="hover:opacity-100">
+                Privacy Policy
+              </Link>
+            </li>
             <li>Sample Reports (Image)</li>
-            <li>Voucher Generate</li>
           </ul>
         </div>
 
@@ -102,7 +106,9 @@ export function SiteFooter() {
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-4 text-xs opacity-70">
           <p>© Copyright 2026, {siteSettings.site_name || "Amarschool"}. All Rights Reserved.</p>
           <p className="flex gap-5">
-            <span>Privacy Policy</span>
+            <Link href="/privacy-policy" className="hover:underline hover:opacity-100">
+              Privacy Policy
+            </Link>
             <span>Support</span>
             <span>Terms &amp; Condition</span>
           </p>

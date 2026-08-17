@@ -13,6 +13,7 @@ interface SettingsData {
   whatsapp_number: string;
   logo_url?: string | null;
   footer_logo_url?: string | null;
+  favicon_url?: string | null;
 }
 
 interface Props {
@@ -22,6 +23,7 @@ interface Props {
 export default function Settings({ settings }: Props) {
   const [logoPreview, setLogoPreview] = useState<string | null>(settings.logo_url || null);
   const [footerLogoPreview, setFooterLogoPreview] = useState<string | null>(settings.footer_logo_url || null);
+  const [faviconPreview, setFaviconPreview] = useState<string | null>(settings.favicon_url || null);
 
   const { data, setData, post, processing, errors, recentlySuccessful } = useForm({
     site_name: settings.site_name || "Amar School",
@@ -33,8 +35,10 @@ export default function Settings({ settings }: Props) {
     whatsapp_number: settings.whatsapp_number || "+8801716282884",
     logo_url: settings.logo_url || "",
     footer_logo_url: settings.footer_logo_url || "",
+    favicon_url: settings.favicon_url || "",
     logo: null as File | null,
     footer_logo: null as File | null,
+    favicon: null as File | null,
   });
 
   const handleLogoChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -61,6 +65,18 @@ export default function Settings({ settings }: Props) {
     }
   };
 
+  const handleFaviconChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setData("favicon", file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFaviconPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleRemoveLogo = () => {
     setData("logo", null);
     setData("logo_url", "");
@@ -71,6 +87,12 @@ export default function Settings({ settings }: Props) {
     setData("footer_logo", null);
     setData("footer_logo_url", "");
     setFooterLogoPreview(null);
+  };
+
+  const handleRemoveFavicon = () => {
+    setData("favicon", null);
+    setData("favicon_url", "");
+    setFaviconPreview(null);
   };
 
   const handleSubmit = (e: FormEvent) => {
@@ -86,14 +108,14 @@ export default function Settings({ settings }: Props) {
         <div>
           <h2 className="text-xl font-bold text-brand-deep">General Settings</h2>
           <p className="text-xs text-muted-foreground">
-            Configure header & footer logos, site title, contact numbers, support email & social links.
+            Configure header & footer logos, favicon icon, site title, contact numbers, support email & social links.
           </p>
         </div>
 
         {recentlySuccessful && (
           <span className="flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-600">
             <CheckCircle className="h-4 w-4" />
-            Header & Footer Logos saved successfully!
+            Site Settings, Logos & Favicon saved successfully!
           </span>
         )}
       </div>
@@ -102,15 +124,15 @@ export default function Settings({ settings }: Props) {
         <form onSubmit={handleSubmit} className="card-elevated space-y-6 p-8">
           {/* Identity & Branding */}
           <div className="border-b border-border pb-4">
-            <h3 className="text-base font-bold text-brand-deep">Identity & Branding Logos</h3>
-            <p className="text-xs text-muted-foreground">Header & Footer Logo images displayed across website.</p>
+            <h3 className="text-base font-bold text-brand-deep">Identity, Logos & Favicon</h3>
+            <p className="text-xs text-muted-foreground">Header Logo, Footer Logo & Favicon icon displayed across website and browser tabs.</p>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div className="grid gap-6 sm:grid-cols-3">
             {/* Header Logo Upload */}
             <div className="rounded-xl border border-dashed border-border bg-background p-4 space-y-3">
               <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                1. Header Logo Image
+                1. Header Logo
               </label>
 
               <div className="flex h-20 w-full items-center justify-center rounded-lg border border-border bg-card p-2">
@@ -128,10 +150,10 @@ export default function Settings({ settings }: Props) {
                 )}
               </div>
 
-              <div className="flex items-center justify-between">
-                <label className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground shadow-sm hover:opacity-90">
+              <div className="flex items-center justify-between gap-2">
+                <label className="flex cursor-pointer items-center gap-1 rounded-lg bg-primary px-2.5 py-1.5 text-xs font-semibold text-primary-foreground shadow-sm hover:opacity-90">
                   <Upload className="h-3.5 w-3.5" />
-                  Upload Header Logo
+                  Upload
                   <input
                     type="file"
                     accept="image/png,image/jpeg,image/jpg,image/svg+xml,image/webp"
@@ -144,7 +166,7 @@ export default function Settings({ settings }: Props) {
                   <button
                     type="button"
                     onClick={handleRemoveLogo}
-                    className="flex items-center gap-1 rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs font-semibold text-destructive hover:bg-destructive/10"
+                    className="flex items-center gap-1 rounded-lg border border-border bg-background px-2 py-1.5 text-xs font-semibold text-destructive hover:bg-destructive/10"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                     Remove
@@ -156,7 +178,7 @@ export default function Settings({ settings }: Props) {
             {/* Footer Logo Upload */}
             <div className="rounded-xl border border-dashed border-border bg-background p-4 space-y-3">
               <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                2. Footer Logo Image
+                2. Footer Logo
               </label>
 
               <div className="flex h-20 w-full items-center justify-center rounded-lg border border-border bg-navy/90 p-2">
@@ -174,10 +196,10 @@ export default function Settings({ settings }: Props) {
                 )}
               </div>
 
-              <div className="flex items-center justify-between">
-                <label className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-accent-foreground shadow-sm hover:opacity-90">
+              <div className="flex items-center justify-between gap-2">
+                <label className="flex cursor-pointer items-center gap-1 rounded-lg bg-accent px-2.5 py-1.5 text-xs font-semibold text-accent-foreground shadow-sm hover:opacity-90">
                   <Upload className="h-3.5 w-3.5" />
-                  Upload Footer Logo
+                  Upload
                   <input
                     type="file"
                     accept="image/png,image/jpeg,image/jpg,image/svg+xml,image/webp"
@@ -190,7 +212,53 @@ export default function Settings({ settings }: Props) {
                   <button
                     type="button"
                     onClick={handleRemoveFooterLogo}
-                    className="flex items-center gap-1 rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs font-semibold text-destructive hover:bg-destructive/10"
+                    className="flex items-center gap-1 rounded-lg border border-border bg-background px-2 py-1.5 text-xs font-semibold text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Remove
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Favicon Icon Upload */}
+            <div className="rounded-xl border border-dashed border-border bg-background p-4 space-y-3">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                3. Favicon Icon
+              </label>
+
+              <div className="flex h-20 w-full items-center justify-center rounded-lg border border-border bg-card p-2">
+                {faviconPreview ? (
+                  <img
+                    src={faviconPreview}
+                    alt="Favicon Preview"
+                    className="h-10 w-10 object-contain rounded"
+                  />
+                ) : (
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <ImageIcon className="h-5 w-5 text-muted-foreground/60" />
+                    <span>No Favicon</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between gap-2">
+                <label className="flex cursor-pointer items-center gap-1 rounded-lg bg-emerald-600 px-2.5 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-700">
+                  <Upload className="h-3.5 w-3.5" />
+                  Upload
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg,image/svg+xml,image/webp,image/x-icon"
+                    onChange={handleFaviconChange}
+                    className="hidden"
+                  />
+                </label>
+
+                {faviconPreview && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveFavicon}
+                    className="flex items-center gap-1 rounded-lg border border-border bg-background px-2 py-1.5 text-xs font-semibold text-destructive hover:bg-destructive/10"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                     Remove

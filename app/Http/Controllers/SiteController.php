@@ -12,8 +12,13 @@ class SiteController extends Controller
      */
     public function index(): Response
     {
+        $pages = (new DashboardController())->getPagesData();
+        $homePage = collect($pages)->firstWhere('slug', '/');
+        $content = $homePage['content'] ?? [];
+
         return Inertia::render('Index', [
             'appName' => config('app.name', 'Amar School'),
+            'pageContent' => $content,
         ]);
     }
 
@@ -30,7 +35,17 @@ class SiteController extends Controller
      */
     public function features(): Response
     {
-        return Inertia::render('Features');
+        $pages = (new DashboardController())->getPagesData();
+        $featuresPage = collect($pages)->firstWhere('slug', '/features');
+        $homePage = collect($pages)->firstWhere('slug', '/');
+
+        $content = array_merge($homePage['content'] ?? [], $featuresPage['content'] ?? []);
+        $modules = $content['modules'] ?? [];
+
+        return Inertia::render('Features', [
+            'pageContent' => $content,
+            'modules' => $modules,
+        ]);
     }
 
     /**
@@ -38,7 +53,16 @@ class SiteController extends Controller
      */
     public function idCard(): Response
     {
-        return Inertia::render('IdCard');
+        $pages = (new DashboardController())->getPagesData();
+        $idCardPage = collect($pages)->firstWhere('slug', '/id-card');
+
+        $content = $idCardPage['content'] ?? [];
+        $samples = $content['samples'] ?? [];
+
+        return Inertia::render('IdCard', [
+            'pageContent' => $content,
+            'samples' => $samples,
+        ]);
     }
 
     /**
@@ -55,5 +79,21 @@ class SiteController extends Controller
     public function webDevelopment(): Response
     {
         return Inertia::render('Services/WebDevelopment');
+    }
+
+    /**
+     * Display the Privacy Policy Page.
+     */
+    public function privacyPolicy(): Response
+    {
+        return Inertia::render('PrivacyPolicy');
+    }
+
+    /**
+     * Display the Contact Us Page.
+     */
+    public function contactUs(): Response
+    {
+        return Inertia::render('ContactUs');
     }
 }

@@ -16,11 +16,20 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [SiteController::class, 'index'])->name('home');
 Route::get('/about', [SiteController::class, 'about'])->name('about');
 Route::get('/features', [SiteController::class, 'features'])->name('features');
-Route::get('/id-card', [SiteController::class, 'idCard'])->name('id-card');
-Route::get('/services/graphics-design', [SiteController::class, 'graphicsDesign'])->name('services.graphics');
-Route::get('/services/web-development', [SiteController::class, 'webDevelopment'])->name('services.web-dev');
+Route::get('/id_card', [SiteController::class, 'idCard'])->name('id-card');
+Route::get('/graphics-design-service', [SiteController::class, 'graphicsDesign'])->name('services.graphics');
+Route::get('/web-development', [SiteController::class, 'webDevelopment'])->name('services.web-dev');
+Route::get('/contact-us', [SiteController::class, 'contactUs'])->name('contact-us');
+Route::get('/privacy-policy', [SiteController::class, 'privacyPolicy'])->name('privacy-policy');
 
-Route::post('/demo-request', [LeadController::class, 'storeDemoRequest'])->name('demo.request');
+// 301 Redirects for backward compatibility with old URL structures
+Route::redirect('/id-card', '/id_card', 301);
+Route::redirect('/services/graphics-design', '/graphics-design-service', 301);
+Route::redirect('/services/web-development', '/web-development', 301);
+
+Route::post('/demo-request', [LeadController::class, 'storeDemoRequest'])
+    ->middleware('throttle:10,1')
+    ->name('demo.request');
 
 // Backend Auth Routes
 Route::middleware('guest')->group(function () {
@@ -34,6 +43,7 @@ Route::middleware('auth')->group(function () {
     // Admin Dashboard Sections
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/pages', [DashboardController::class, 'pages'])->name('dashboard.pages');
+    Route::post('/dashboard/pages', [DashboardController::class, 'updatePages'])->name('dashboard.pages.update');
     Route::get('/dashboard/menu', [DashboardController::class, 'menu'])->name('dashboard.menu');
     Route::post('/dashboard/menu', [DashboardController::class, 'updateMenu'])->name('dashboard.menu.update');
     Route::get('/dashboard/settings', [DashboardController::class, 'settings'])->name('dashboard.settings');

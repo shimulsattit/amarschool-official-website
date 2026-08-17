@@ -1,12 +1,14 @@
 import { Head } from "@inertiajs/react";
+import { SiteLayout, PageHero, SectionTitle } from "@/components/site/SiteLayout";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { SiteLayout, PageHero, SectionTitle } from "@/components/site/SiteLayout";
-import heroImg from "@/assets/hero-dashboard.png";
+import aboutTopImg from "@/assets/about-top.png";
+import aboutBottomImg from "@/assets/about-bottom.png";
+import trustedCustomersImg from "@/assets/trusted-customers.png";
 import { BadgeCheck, Phone, MessageCircle, Target, Eye } from "lucide-react";
 
 const points = [
@@ -32,37 +34,73 @@ export default function About() {
 
       <PageHero title="About Us" breadcrumb="Pages" />
 
-      <section className="py-20">
+      <section className="py-16 md:py-24 bg-white overflow-hidden">
         <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 lg:grid-cols-2">
-          <div className="relative">
-            <img
-              src={heroImg}
-              alt="Amar School platform overview"
-              width={1200}
-              height={900}
-              loading="lazy"
-              className="w-full"
-            />
-            <div className="card-elevated absolute bottom-6 right-0 px-6 py-4">
-              <p className="font-display text-xl font-bold text-primary">08 Years Of</p>
-              <p className="font-display text-xl font-bold text-primary">Experience</p>
+          {/* Left Column Overlapping Images */}
+          <div className="relative flex justify-center lg:justify-start">
+            {/* Background blue dots & wave graphics */}
+            <div className="absolute -left-12 top-12 h-64 w-64 opacity-25 pointer-events-none">
+              <svg viewBox="0 0 200 200" className="h-full w-full text-blue-500 fill-current">
+                <defs>
+                  <pattern id="about-dots" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
+                    <circle cx="3" cy="3" r="2.5" />
+                  </pattern>
+                </defs>
+                <rect width="200" height="200" fill="url(#about-dots)" />
+              </svg>
+            </div>
+
+            <div className="relative w-full max-w-[480px]">
+              {/* Top Image */}
+              <div className="relative z-10 w-[78%] rounded-2xl shadow-lg overflow-hidden bg-white">
+                <img
+                  src={aboutTopImg}
+                  alt="Online Classroom Solution"
+                  className="w-full h-auto object-cover"
+                />
+              </div>
+
+              {/* Bottom Image (Overlapping bottom right) */}
+              <div className="relative z-20 -mt-20 ml-[22%] w-[78%] rounded-2xl shadow-2xl overflow-hidden bg-white border-4 border-white">
+                <img
+                  src={aboutBottomImg}
+                  alt="Amar School Dashboard Solution"
+                  className="w-full h-auto object-cover"
+                />
+              </div>
+
+              {/* Floating Experience Badge (Center Right) */}
+              <div className="absolute right-[-10px] sm:right-[-20px] top-[30%] z-30 rounded-2xl bg-white p-5 md:p-6 shadow-2xl border border-slate-100/80 text-center min-w-[160px] md:min-w-[180px]">
+                <p className="text-lg md:text-xl font-bold text-[#0B63E5] leading-tight">
+                  08 Years Of
+                </p>
+                <p className="text-lg md:text-xl font-bold text-[#0B63E5] leading-tight">
+                  Experience
+                </p>
+              </div>
             </div>
           </div>
+
+          {/* Right Column Content */}
           <div>
-            <h2 className="text-3xl font-bold text-primary">Completed Educational Solution</h2>
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+            <h2 className="text-2xl md:text-3xl font-bold text-[#0B63E5] leading-tight">
+              Completed Educational Solution
+            </h2>
+            <p className="mt-4 text-xs md:text-sm leading-relaxed text-slate-600">
               Amar School Management System is a comprehensive online school management system that
               enables educators to manage their schools from a single, central location. It offers a
               wide range of features for both individual and group classrooms, as well as an
               extensive reporting system that makes it easy to track student progress.
             </p>
-            <Accordion type="single" collapsible className="mt-6">
+            <Accordion type="single" collapsible defaultValue="p-0" className="mt-6 space-y-1">
               {points.map(([q, a], i) => (
-                <AccordionItem key={q} value={`p-${i}`}>
-                  <AccordionTrigger className="text-left text-sm font-semibold text-brand-deep">
+                <AccordionItem key={q} value={`p-${i}`} className="border-b border-slate-200">
+                  <AccordionTrigger className="text-left text-xs md:text-sm font-bold text-slate-800 hover:text-[#0B63E5] py-3.5 no-underline">
                     {q}
                   </AccordionTrigger>
-                  <AccordionContent className="text-sm text-muted-foreground">{a}</AccordionContent>
+                  <AccordionContent className="text-xs leading-relaxed text-slate-500 pb-4">
+                    {a}
+                  </AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>
@@ -94,29 +132,12 @@ export default function About() {
               Talk To A Consultant
             </button>
           </div>
-          <div className="relative">
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-              {[
-                ["1000+", "2023"],
-                ["3600+", "2016"],
-                ["1000+", "2023"],
-                ["700+", "2023"],
-                ["1000+", "2021"],
-                ["2800+", "2023"],
-                ["1100+", "2018"],
-                ["900+", "2023"],
-              ].map(([n, y], i) => (
-                <div key={i} className="card-elevated p-4 text-center">
-                  <p className="font-display text-lg font-bold text-primary">{n}</p>
-                  <p className="text-[11px] text-muted-foreground">Students</p>
-                  <p className="mt-1 text-xs font-semibold text-accent">Since {y}</p>
-                </div>
-              ))}
-            </div>
-            <div className="card-elevated mt-6 inline-block px-6 py-4">
-              <p className="font-display text-2xl font-bold text-brand-deep">3+</p>
-              <p className="text-xs text-muted-foreground">Completed Projects</p>
-            </div>
+          <div className="flex justify-center items-center">
+            <img
+              src={trustedCustomersImg}
+              alt="150+ Institutions trusted Amar School Management System"
+              className="w-full h-auto max-w-full rounded-2xl shadow-lg border border-slate-100 object-contain"
+            />
           </div>
         </div>
       </section>

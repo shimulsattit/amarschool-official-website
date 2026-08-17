@@ -54,10 +54,30 @@ class HandleInertiaRequests extends Middleware
             'whatsapp_number' => '+8801716282884',
             'logo_url' => null,
             'footer_logo_url' => null,
+            'favicon_url' => null,
         ];
 
-        $menuItems = session('menu_items', $defaultMenuItems);
-        $siteSettings = session('settings', $defaultSettings);
+        $menuItems = $defaultMenuItems;
+        $menuPath = storage_path('app/menu_items.json');
+        if (\Illuminate\Support\Facades\File::exists($menuPath)) {
+            $jsonMenu = json_decode(\Illuminate\Support\Facades\File::get($menuPath), true);
+            if (is_array($jsonMenu)) {
+                $menuItems = $jsonMenu;
+            }
+        } else {
+            $menuItems = session('menu_items', $defaultMenuItems);
+        }
+
+        $siteSettings = $defaultSettings;
+        $settingsPath = storage_path('app/site_settings.json');
+        if (\Illuminate\Support\Facades\File::exists($settingsPath)) {
+            $jsonSettings = json_decode(\Illuminate\Support\Facades\File::get($settingsPath), true);
+            if (is_array($jsonSettings)) {
+                $siteSettings = array_merge($defaultSettings, $jsonSettings);
+            }
+        } else {
+            $siteSettings = session('settings', $defaultSettings);
+        }
 
         return [
             ...parent::share($request),
