@@ -136,7 +136,7 @@ export default function Index({ pageContent }: IndexProps) {
             </p>
             <div className="mt-7 flex flex-wrap gap-4">
               <Link
-                href="/lead-form"
+                href="/contact-us"
                 className="inline-flex items-center gap-3 rounded-full bg-[#0B63E5] px-7 py-3 text-sm font-semibold text-white shadow-md shadow-blue-500/20 transition-all hover:bg-[#0052cc] hover:shadow-lg"
               >
                 <span>{pageContent?.heroButtonText || "Request A Demo"}</span>
@@ -181,8 +181,8 @@ export default function Index({ pageContent }: IndexProps) {
               </p>
 
               <div className="pt-4 flex items-center gap-3">
-                <a
-                  href="/lead-form"
+                <Link
+                  href="/contact-us"
                   className="group flex items-center gap-3 text-left focus:outline-none"
                 >
                   <div className="grid h-12 w-12 place-items-center rounded-full bg-[#0B63E5] text-white shadow-md shadow-blue-500/30 transition-transform group-hover:scale-105">
@@ -191,7 +191,7 @@ export default function Index({ pageContent }: IndexProps) {
                   <span className="text-xs font-bold tracking-wider text-[#0B63E5] uppercase group-hover:underline">
                     INTRO VIDEO
                   </span>
-                </a>
+                </Link>
               </div>
             </div>
 

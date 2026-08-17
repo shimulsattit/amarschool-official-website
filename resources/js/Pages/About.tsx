@@ -70,11 +70,11 @@ export default function About() {
               </div>
 
               {/* Floating Experience Badge (Center Right) */}
-              <div className="absolute right-[-10px] sm:right-[-20px] top-[30%] z-30 rounded-2xl bg-white p-5 md:p-6 shadow-2xl border border-slate-100/80 text-center min-w-[160px] md:min-w-[180px]">
-                <p className="text-lg md:text-xl font-bold text-[#0B63E5] leading-tight">
+              <div className="absolute right-0 sm:right-[-20px] top-[25%] sm:top-[30%] z-30 rounded-2xl bg-white p-3.5 sm:p-5 md:p-6 shadow-2xl border border-slate-100/80 text-center min-w-[140px] sm:min-w-[160px] md:min-w-[180px]">
+                <p className="text-base sm:text-lg md:text-xl font-bold text-[#0B63E5] leading-tight">
                   08 Years Of
                 </p>
-                <p className="text-lg md:text-xl font-bold text-[#0B63E5] leading-tight">
+                <p className="text-base sm:text-lg md:text-xl font-bold text-[#0B63E5] leading-tight">
                   Experience
                 </p>
               </div>

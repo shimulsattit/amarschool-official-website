@@ -65,17 +65,17 @@ export function SiteFooter() {
           <h3 className="text-lg font-semibold">Services</h3>
           <ul className="mt-4 space-y-2 text-sm opacity-75">
             <li>
-              <Link href="/id-card" className="hover:opacity-100">
+              <Link href="/id_card" className="hover:opacity-100">
                 ID Card
               </Link>
             </li>
             <li>
-              <Link href="/services/graphics-design" className="hover:opacity-100">
+              <Link href="/graphics-design-service" className="hover:opacity-100">
                 Graphics Design
               </Link>
             </li>
             <li>
-              <Link href="/services/web-development" className="hover:opacity-100">
+              <Link href="/web-development" className="hover:opacity-100">
                 Web Development
               </Link>
             </li>
