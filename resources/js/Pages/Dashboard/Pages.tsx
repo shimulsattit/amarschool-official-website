@@ -737,7 +737,8 @@ export default function Pages({ pages: initialPages }: Props) {
                       <button
                         type="button"
                         onClick={handleAddSample}
-                        className="flex items-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 text-xs font-bold text-white shadow-md hover:bg-emerald-700 transition-all active:scale-95 cursor-pointer"
+                        style={{ backgroundColor: '#0B63E5', color: '#ffffff' }}
+                        className="flex items-center gap-2 rounded-xl px-6 py-3 text-xs font-bold shadow-lg hover:opacity-95 transition-all active:scale-95 cursor-pointer"
                       >
                         <Plus className="h-4 w-4 stroke-[3]" />
                         + Add New Sample Card Set (নতুন আইডি কার্ড সেট যুক্ত করুন)
