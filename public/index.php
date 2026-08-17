@@ -4,14 +4,25 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
-// Determine if the application is in maintenance mode...
-if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+// Determine maintenance mode path
+$maintenance = file_exists(__DIR__.'/../app/storage/framework/maintenance.php')
+    ? __DIR__.'/../app/storage/framework/maintenance.php'
+    : __DIR__.'/../storage/framework/maintenance.php';
+
+if (file_exists($maintenance)) {
     require $maintenance;
 }
 
-// Register the Auto Loader...
-require __DIR__.'/../vendor/autoload.php';
+// Register Auto Loader (Supports both local server and cPanel public_html setup)
+$autoloader = file_exists(__DIR__.'/../app/vendor/autoload.php')
+    ? __DIR__.'/../app/vendor/autoload.php'
+    : __DIR__.'/../vendor/autoload.php';
 
-// Bootstrap Laravel and handle the request...
-(require_once __DIR__.'/../bootstrap/app.php')
-    ->handleRequest(Request::capture());
+require $autoloader;
+
+// Bootstrap Laravel and handle the request
+$bootstrap = file_exists(__DIR__.'/../app/bootstrap/app.php')
+    ? __DIR__.'/../app/bootstrap/app.php'
+    : __DIR__.'/../bootstrap/app.php';
+
+(require_once $bootstrap)->handleRequest(Request::capture());
