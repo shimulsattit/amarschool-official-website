@@ -255,6 +255,13 @@ export default function Pages({ pages: initialPages }: Props) {
       samples: updated,
       content: { ...formData.content, samples: updated },
     });
+
+    // Auto-scroll to bottom of modal so newly added sample card set is immediately visible!
+    setTimeout(() => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+      }
+    }, 100);
   };
 
   const handleRemoveSample = (index: number) => {
@@ -723,6 +730,18 @@ export default function Pages({ pages: initialPages }: Props) {
                           </div>
                         </div>
                       ))}
+                    </div>
+
+                    {/* Bottom Add Sample Card Set Button */}
+                    <div className="flex justify-center pt-6 pb-2 border-t border-border/80">
+                      <button
+                        type="button"
+                        onClick={handleAddSample}
+                        className="flex items-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 text-xs font-bold text-white shadow-md hover:bg-emerald-700 transition-all active:scale-95 cursor-pointer"
+                      >
+                        <Plus className="h-4 w-4 stroke-[3]" />
+                        + Add New Sample Card Set (নতুন আইডি কার্ড সেট যুক্ত করুন)
+                      </button>
                     </div>
                   </div>
                 ) : activeTab === "modules" ? (
