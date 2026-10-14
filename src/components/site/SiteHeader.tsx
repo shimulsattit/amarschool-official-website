@@ -43,6 +43,13 @@ export function SiteHeader() {
     { label: "OMR", to: "https://omr.amarschool.co/", isBadge: true, isExternal: true },
   ];
 
+  const isServicesActive =
+    url === "/id_card" ||
+    url === "/id-card" ||
+    url === "/web-development" ||
+    url === "/graphics-design-service" ||
+    url.startsWith("/services/");
+
   // Filter active header menu items from admin panel
   const customHeaderItems = (props.menuItems || [])
     .filter((item) => item.active !== false && (item.location === "Header & Footer" || item.location === "Header Only"))
