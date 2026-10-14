@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Lead;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -147,7 +146,6 @@ class DashboardController extends Controller
         }
 
         File::put($path, json_encode($pages, JSON_PRETTY_PRINT));
-        Cache::forget('site_pages_content');
 
         return back()->with('message', 'Page contents, Core Modules, and ID Card Samples saved successfully.');
     }
