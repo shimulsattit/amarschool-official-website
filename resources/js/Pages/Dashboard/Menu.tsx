@@ -88,10 +88,14 @@ export default function Menu({ menuItems: initialMenuItems }: Props) {
       );
       persistMenuItems(updatedList, `Menu item "${formData.title}" updated and synced to website header!`);
     } else {
+      let finalUrl = formData.url.trim();
+      if (!finalUrl.startsWith("http://") && !finalUrl.startsWith("https://") && !finalUrl.startsWith("#") && !finalUrl.startsWith("/")) {
+        finalUrl = `/${finalUrl}`;
+      }
       const newItem: MenuItem = {
         id: Date.now(),
         title: formData.title,
-        url: formData.url.startsWith("/") ? formData.url : `/${formData.url}`,
+        url: finalUrl,
         location: formData.location,
         order: Number(formData.order),
         active: formData.active,

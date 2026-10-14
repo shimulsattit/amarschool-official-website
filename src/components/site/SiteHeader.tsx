@@ -43,12 +43,101 @@ export function SiteHeader() {
     { label: "OMR", to: "https://omr.amarschool.co/", isBadge: true, isExternal: true },
   ];
 
-  const isServicesActive =
-    url === "/id_card" ||
-    url === "/id-card" ||
-    url === "/web-development" ||
-    url === "/graphics-design-service" ||
-    url.startsWith("/services/");
+  // Filter active header menu items from admin panel
+  const customHeaderItems = (props.menuItems || [])
+    .filter((item) => item.active !== false && (item.location === "Header & Footer" || item.location === "Header Only"))
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
+
+  // Determine whether to use dynamic items or fallback
+  const hasCustomItems = customHeaderItems.length > 0;
+
+  const renderLink = (item: { title?: string; label?: string; url?: string; to?: string }, isMobile = false) => {
+    const itemTitle = item.title || item.label || "";
+    const targetUrl = item.url || item.to || "/";
+    const isExternal = targetUrl.startsWith("http://") || targetUrl.startsWith("https://") || targetUrl.startsWith("//");
+    const isActive = !isExternal && (url === targetUrl || (targetUrl !== "/" && url.startsWith(targetUrl)));
+    const isBadge = itemTitle.toUpperCase() === "OMR";
+
+    if (isMobile) {
+      if (isExternal) {
+        return (
+          <a
+            key={itemTitle + targetUrl}
+            href={targetUrl}
+            target="_blank"
+            rel="noreferrer"
+            onClick={() => setOpen(false)}
+            className={`rounded-md px-2 py-2 text-sm font-bold ${isBadge ? "text-[#E52D27]" : "text-muted-foreground hover:bg-secondary hover:text-primary"}`}
+          >
+            {itemTitle} ↗
+          </a>
+        );
+      }
+      return (
+        <Link
+          key={itemTitle + targetUrl}
+          href={targetUrl}
+          onClick={() => setOpen(false)}
+          className={`rounded-md px-2 py-2 text-sm font-medium ${
+            isActive ? "text-primary font-bold bg-secondary/50" : "text-muted-foreground hover:bg-secondary hover:text-primary"
+          }`}
+        >
+          {itemTitle}
+        </Link>
+      );
+    }
+
+    if (isBadge) {
+      if (isExternal) {
+        return (
+          <a
+            key={itemTitle + targetUrl}
+            href={targetUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="rounded bg-[#E52D27] px-3.5 py-1 text-xs font-bold text-white uppercase tracking-wider hover:bg-red-700 transition-colors shadow-xs"
+          >
+            {itemTitle}
+          </a>
+        );
+      }
+      return (
+        <Link
+          key={itemTitle + targetUrl}
+          href={targetUrl}
+          className="rounded bg-[#E52D27] px-3.5 py-1 text-xs font-bold text-white uppercase tracking-wider hover:bg-red-700 transition-colors shadow-xs"
+        >
+          {itemTitle}
+        </Link>
+      );
+    }
+
+    if (isExternal) {
+      return (
+        <a
+          key={itemTitle + targetUrl}
+          href={targetUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="text-[13px] font-semibold uppercase tracking-wide text-muted-foreground transition-colors hover:text-primary"
+        >
+          {itemTitle}
+        </a>
+      );
+    }
+
+    return (
+      <Link
+        key={itemTitle + targetUrl}
+        href={targetUrl}
+        className={`text-[13px] font-semibold uppercase tracking-wide transition-colors hover:text-primary ${
+          isActive ? "text-primary font-bold" : "text-muted-foreground"
+        }`}
+      >
+        {itemTitle}
+      </Link>
+    );
+  };
 
   return (
     <header className="sticky top-0 z-50">
@@ -104,87 +193,84 @@ export function SiteHeader() {
 
           {/* Desktop Navigation */}
           <nav className="hidden items-center gap-6 lg:flex">
-            {mainNav.map((item) => {
-              const isActive = url === item.to || (item.to !== "/" && url.startsWith(item.to));
-              if (item.isBadge) {
-                if (item.isExternal) {
-                  return (
-                    <a
-                      key={item.label}
-                      href={item.to}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="rounded bg-[#E52D27] px-3.5 py-1 text-xs font-bold text-white uppercase tracking-wider hover:bg-red-700 transition-colors shadow-xs"
-                    >
-                      {item.label}
-                    </a>
-                  );
-                }
-                return (
-                  <Link
-                    key={item.label}
-                    href={item.to}
-                    className="rounded bg-[#E52D27] px-3.5 py-1 text-xs font-bold text-white uppercase tracking-wider hover:bg-red-700 transition-colors shadow-xs"
+            {hasCustomItems ? (
+              <>
+                {customHeaderItems.map((item) => renderLink(item, false))}
+                {/* Services Dropdown if services exist in dropdown */}
+                <div className="relative group py-3">
+                  <button
+                    type="button"
+                    className={`flex items-center gap-1.5 text-[13px] font-semibold uppercase tracking-wide transition-colors group-hover:text-primary ${
+                      isServicesActive ? "text-primary font-bold" : "text-muted-foreground"
+                    }`}
                   >
-                    {item.label}
-                  </Link>
-                );
-              }
-              return (
+                    <span>Services</span>
+                    <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-180" />
+                  </button>
+
+                  <div className="absolute top-full left-0 hidden group-hover:block w-56 rounded-xl bg-white p-2 shadow-2xl border border-slate-100/90 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                    {servicesSubmenu.map((sub) => {
+                      const isSubActive = url === sub.to;
+                      return (
+                        <Link
+                          key={sub.to}
+                          href={sub.to}
+                          className={`block rounded-lg px-4 py-2.5 text-xs font-semibold uppercase tracking-wider transition-all ${
+                            isSubActive
+                              ? "bg-[#EBF3FF] text-[#0B63E5] font-bold"
+                              : "text-slate-700 hover:bg-slate-50 hover:text-primary"
+                          }`}
+                        >
+                          {sub.label}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {mainNav.map((item) => renderLink(item, false))}
+                <div className="relative group py-3">
+                  <button
+                    type="button"
+                    className={`flex items-center gap-1.5 text-[13px] font-semibold uppercase tracking-wide transition-colors group-hover:text-primary ${
+                      isServicesActive ? "text-primary font-bold" : "text-muted-foreground"
+                    }`}
+                  >
+                    <span>Services</span>
+                    <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-180" />
+                  </button>
+
+                  <div className="absolute top-full left-0 hidden group-hover:block w-56 rounded-xl bg-white p-2 shadow-2xl border border-slate-100/90 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                    {servicesSubmenu.map((sub) => {
+                      const isSubActive = url === sub.to;
+                      return (
+                        <Link
+                          key={sub.to}
+                          href={sub.to}
+                          className={`block rounded-lg px-4 py-2.5 text-xs font-semibold uppercase tracking-wider transition-all ${
+                            isSubActive
+                              ? "bg-[#EBF3FF] text-[#0B63E5] font-bold"
+                              : "text-slate-700 hover:bg-slate-50 hover:text-primary"
+                          }`}
+                        >
+                          {sub.label}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
                 <Link
-                  key={item.to}
-                  href={item.to}
+                  href="/contact-us"
                   className={`text-[13px] font-semibold uppercase tracking-wide transition-colors hover:text-primary ${
-                    isActive ? "text-primary font-bold" : "text-muted-foreground"
+                    url === "/contact-us" ? "text-primary font-bold" : "text-muted-foreground"
                   }`}
                 >
-                  {item.label}
+                  Contact Us
                 </Link>
-              );
-            })}
-
-            {/* Services Dropdown */}
-            <div className="relative group py-3">
-              <button
-                type="button"
-                className={`flex items-center gap-1.5 text-[13px] font-semibold uppercase tracking-wide transition-colors group-hover:text-primary ${
-                  isServicesActive ? "text-primary font-bold" : "text-muted-foreground"
-                }`}
-              >
-                <span>Services</span>
-                <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-180" />
-              </button>
-
-              {/* Dropdown Menu Box */}
-              <div className="absolute top-full left-0 hidden group-hover:block w-56 rounded-xl bg-white p-2 shadow-2xl border border-slate-100/90 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                {servicesSubmenu.map((sub) => {
-                  const isSubActive = url === sub.to;
-                  return (
-                    <Link
-                      key={sub.to}
-                      href={sub.to}
-                      className={`block rounded-lg px-4 py-2.5 text-xs font-semibold uppercase tracking-wider transition-all ${
-                        isSubActive
-                          ? "bg-[#EBF3FF] text-[#0B63E5] font-bold"
-                          : "text-slate-700 hover:bg-slate-50 hover:text-primary"
-                      }`}
-                    >
-                      {sub.label}
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Contact Us */}
-            <Link
-              href="/contact-us"
-              className={`text-[13px] font-semibold uppercase tracking-wide transition-colors hover:text-primary ${
-                url === "/contact-us" ? "text-primary font-bold" : "text-muted-foreground"
-              }`}
-            >
-              Contact Us
-            </Link>
+              </>
+            )}
           </nav>
 
           <div className="flex items-center gap-3">
@@ -210,68 +296,76 @@ export function SiteHeader() {
         {/* Mobile Navigation */}
         {open && (
           <nav className="grid gap-1 border-t border-border px-6 py-3 lg:hidden">
-            {mainNav.map((item) => {
-              if (item.isExternal) {
-                return (
-                  <a
-                    key={item.to}
-                    href={item.to}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={() => setOpen(false)}
-                    className="rounded-md px-2 py-2 text-sm font-bold text-[#E52D27] hover:bg-secondary"
+            {hasCustomItems ? (
+              <>
+                {customHeaderItems.map((item) => renderLink(item, true))}
+                {/* Mobile Services Accordion */}
+                <div className="py-1">
+                  <button
+                    onClick={() => setMobileServicesOpen((v) => !v)}
+                    className="flex w-full items-center justify-between rounded-md px-2 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-primary"
                   >
-                    {item.label} ↗
-                  </a>
-                );
-              }
-              return (
+                    <span>Services</span>
+                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${mobileServicesOpen ? "rotate-180" : ""}`} />
+                  </button>
+                  {mobileServicesOpen && (
+                    <div className="ml-4 mt-1 grid gap-1 border-l-2 border-primary/30 pl-3">
+                      {servicesSubmenu.map((sub) => (
+                        <Link
+                          key={sub.to}
+                          href={sub.to}
+                          onClick={() => setOpen(false)}
+                          className={`rounded-md px-2 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${
+                            url === sub.to ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
+                          }`}
+                        >
+                          {sub.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                {mainNav.map((item) => renderLink(item, true))}
+                {/* Mobile Services Accordion */}
+                <div className="py-1">
+                  <button
+                    onClick={() => setMobileServicesOpen((v) => !v)}
+                    className="flex w-full items-center justify-between rounded-md px-2 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-primary"
+                  >
+                    <span>Services</span>
+                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${mobileServicesOpen ? "rotate-180" : ""}`} />
+                  </button>
+                  {mobileServicesOpen && (
+                    <div className="ml-4 mt-1 grid gap-1 border-l-2 border-primary/30 pl-3">
+                      {servicesSubmenu.map((sub) => (
+                        <Link
+                          key={sub.to}
+                          href={sub.to}
+                          onClick={() => setOpen(false)}
+                          className={`rounded-md px-2 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${
+                            url === sub.to ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
+                          }`}
+                        >
+                          {sub.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Mobile Contact Us */}
                 <Link
-                  key={item.to}
-                  href={item.to}
+                  href="/contact-us"
                   onClick={() => setOpen(false)}
                   className="rounded-md px-2 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-primary"
                 >
-                  {item.label}
+                  Contact Us
                 </Link>
-              );
-            })}
-
-            {/* Mobile Services Accordion */}
-            <div className="py-1">
-              <button
-                onClick={() => setMobileServicesOpen((v) => !v)}
-                className="flex w-full items-center justify-between rounded-md px-2 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-primary"
-              >
-                <span>Services</span>
-                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${mobileServicesOpen ? "rotate-180" : ""}`} />
-              </button>
-              {mobileServicesOpen && (
-                <div className="ml-4 mt-1 grid gap-1 border-l-2 border-primary/30 pl-3">
-                  {servicesSubmenu.map((sub) => (
-                    <Link
-                      key={sub.to}
-                      href={sub.to}
-                      onClick={() => setOpen(false)}
-                      className={`rounded-md px-2 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${
-                        url === sub.to ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
-                      }`}
-                    >
-                      {sub.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Mobile Contact Us */}
-            <Link
-              href="/contact-us"
-              onClick={() => setOpen(false)}
-              className="rounded-md px-2 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-primary"
-            >
-              Contact Us
-            </Link>
+              </>
+            )}
           </nav>
         )}
       </div>
