@@ -15,6 +15,14 @@ createInertiaApp({
       import.meta.glob('./Pages/**/*.tsx'),
     ),
   setup({ el, App, props }) {
+    const faviconUrl = props.initialPage?.props?.siteSettings?.favicon_url;
+    if (faviconUrl) {
+      const existingIcons = document.querySelectorAll("link[rel*='icon'], link[rel='apple-touch-icon']");
+      existingIcons.forEach((el) => {
+        el.setAttribute('href', faviconUrl);
+      });
+    }
+
     const root = createRoot(el);
     root.render(<App {...props} />);
   },

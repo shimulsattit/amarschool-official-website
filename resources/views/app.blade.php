@@ -10,6 +10,7 @@
     @php
       $settingsPath = storage_path('app/site_settings.json');
       $faviconUrl = '/favicon.ico';
+      $v = time();
       if (\Illuminate\Support\Facades\File::exists($settingsPath)) {
           $jsonSettings = json_decode(\Illuminate\Support\Facades\File::get($settingsPath), true);
           if (!empty($jsonSettings['favicon_url'])) {
@@ -17,8 +18,9 @@
           }
       }
     @endphp
-    <link id="site-favicon" rel="icon" href="{{ $faviconUrl }}" />
-    <link rel="shortcut icon" href="{{ $faviconUrl }}" />
+    <link rel="icon" type="image/png" href="{{ $faviconUrl }}?v={{ $v }}" />
+    <link rel="shortcut icon" href="{{ $faviconUrl }}?v={{ $v }}" />
+    <link rel="apple-touch-icon" href="{{ $faviconUrl }}?v={{ $v }}" />
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
