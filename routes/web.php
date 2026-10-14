@@ -52,3 +52,22 @@ Route::middleware('auth')->group(function () {
     Route::patch('/dashboard/leads/{lead}/status', [DashboardController::class, 'updateStatus'])->name('dashboard.leads.status');
     Route::delete('/dashboard/leads/{lead}', [DashboardController::class, 'destroy'])->name('dashboard.leads.destroy');
 });
+
+// Fallback upload server route in case cPanel public_html/uploads is not directly linked
+Route::get('/uploads/{filename}', function ($filename) {
+    $paths = [
+        public_path('uploads/' . $filename),
+        base_path('public/uploads/' . $filename),
+        dirname(base_path()) . '/public_html/uploads/' . $filename,
+        dirname(base_path()) . '/amarschool.co/uploads/' . $filename,
+        storage_path('app/public/uploads/' . $filename),
+    ];
+
+    foreach ($paths as $path) {
+        if (file_exists($path)) {
+            return response()->file($path);
+        }
+    }
+
+    abort(404);
+})->where('filename', '.*');

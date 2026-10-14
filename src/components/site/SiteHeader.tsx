@@ -28,6 +28,8 @@ export function SiteHeader() {
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const { url, props } = usePage<{ menuItems?: MenuItem[]; siteSettings?: SiteSettings }>();
 
+  const [logoFailed, setLogoFailed] = useState(false);
+
   const siteSettings = props.siteSettings || {};
 
   const servicesSubmenu = [
@@ -180,10 +182,11 @@ export function SiteHeader() {
       <div className="border-b border-border bg-card">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-2">
           <Link href="/" className="flex items-center gap-2">
-            {siteSettings.logo_url ? (
+            {siteSettings.logo_url && !logoFailed ? (
               <img
                 src={siteSettings.logo_url}
                 alt={siteSettings.site_name || "Amar School Logo"}
+                onError={() => setLogoFailed(true)}
                 className="h-9 sm:h-10 md:h-11 w-auto max-w-[220px] md:max-w-[260px] object-contain"
               />
             ) : (

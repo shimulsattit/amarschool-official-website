@@ -234,11 +234,36 @@ class DashboardController extends Controller
             File::makeDirectory($uploadPath, 0755, true, true);
         }
 
+        $syncFileToWebRoots = function ($filename) use ($uploadPath) {
+            $source = $uploadPath . DIRECTORY_SEPARATOR . $filename;
+            if (! File::exists($source)) {
+                return;
+            }
+            $targetDirs = [
+                dirname(base_path()) . '/public_html/uploads',
+                dirname(base_path()) . '/amarschool.co/uploads',
+            ];
+            foreach ($targetDirs as $targetDir) {
+                try {
+                    $parent = dirname($targetDir);
+                    if (File::isDirectory($parent)) {
+                        if (! File::isDirectory($targetDir)) {
+                            @File::makeDirectory($targetDir, 0755, true, true);
+                        }
+                        @File::copy($source, $targetDir . DIRECTORY_SEPARATOR . $filename);
+                    }
+                } catch (\Throwable $e) {
+                    // Ignore copy errors if permissions or directories do not exist
+                }
+            }
+        };
+
         // Header Logo Upload
         if ($request->hasFile('logo')) {
             $file = $request->file('logo');
             $filename = 'header_logo_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move($uploadPath, $filename);
+            $syncFileToWebRoots($filename);
 
             $validated['logo_url'] = '/uploads/' . $filename;
         } else {
@@ -250,6 +275,7 @@ class DashboardController extends Controller
             $file = $request->file('footer_logo');
             $filename = 'footer_logo_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move($uploadPath, $filename);
+            $syncFileToWebRoots($filename);
 
             $validated['footer_logo_url'] = '/uploads/' . $filename;
         } else {
@@ -261,6 +287,7 @@ class DashboardController extends Controller
             $file = $request->file('favicon');
             $filename = 'favicon_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move($uploadPath, $filename);
+            $syncFileToWebRoots($filename);
 
             $validated['favicon_url'] = '/uploads/' . $filename;
         } else {

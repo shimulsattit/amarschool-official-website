@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, usePage } from "@inertiajs/react";
 import { MapPin, Mail, Phone } from "lucide-react";
 
@@ -14,6 +15,7 @@ interface SiteSettings {
 }
 
 export function SiteFooter() {
+  const [logoFailed, setLogoFailed] = useState(false);
   const { props } = usePage<{ siteSettings?: SiteSettings }>();
   const siteSettings = props.siteSettings || {};
 
@@ -23,10 +25,11 @@ export function SiteFooter() {
     <footer className="bg-navy text-navy-foreground">
       <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 md:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-lg border border-navy-foreground/15 p-6">
-          {logoSrc ? (
+          {logoSrc && !logoFailed ? (
             <img
               src={logoSrc}
               alt={siteSettings.site_name || "Amar School Footer Logo"}
+              onError={() => setLogoFailed(true)}
               className="h-12 w-auto max-w-[240px] object-contain mb-4"
             />
           ) : (
