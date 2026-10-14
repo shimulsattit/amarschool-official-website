@@ -57,27 +57,27 @@ class HandleInertiaRequests extends Middleware
             'favicon_url' => null,
         ];
 
-        $menuItems = \Illuminate\Support\Facades\Cache::remember('site_menu_items_cache', 86400, function () use ($defaultMenuItems) {
-            $menuPath = storage_path('app/menu_items.json');
-            if (\Illuminate\Support\Facades\File::exists($menuPath)) {
-                $jsonMenu = json_decode(\Illuminate\Support\Facades\File::get($menuPath), true);
-                if (is_array($jsonMenu) && count($jsonMenu) > 0) {
-                    return $jsonMenu;
-                }
+        $menuItems = $defaultMenuItems;
+        $menuPath = storage_path('app/menu_items.json');
+        if (\Illuminate\Support\Facades\File::exists($menuPath)) {
+            $jsonMenu = json_decode(\Illuminate\Support\Facades\File::get($menuPath), true);
+            if (is_array($jsonMenu) && count($jsonMenu) > 0) {
+                $menuItems = $jsonMenu;
             }
-            return session('menu_items', $defaultMenuItems);
-        });
+        } else {
+            $menuItems = session('menu_items', $defaultMenuItems);
+        }
 
-        $siteSettings = \Illuminate\Support\Facades\Cache::remember('site_settings_cache', 86400, function () use ($defaultSettings) {
-            $settingsPath = storage_path('app/site_settings.json');
-            if (\Illuminate\Support\Facades\File::exists($settingsPath)) {
-                $jsonSettings = json_decode(\Illuminate\Support\Facades\File::get($settingsPath), true);
-                if (is_array($jsonSettings)) {
-                    return array_merge($defaultSettings, $jsonSettings);
-                }
+        $siteSettings = $defaultSettings;
+        $settingsPath = storage_path('app/site_settings.json');
+        if (\Illuminate\Support\Facades\File::exists($settingsPath)) {
+            $jsonSettings = json_decode(\Illuminate\Support\Facades\File::get($settingsPath), true);
+            if (is_array($jsonSettings)) {
+                $siteSettings = array_merge($defaultSettings, $jsonSettings);
             }
-            return session('settings', $defaultSettings);
-        });
+        } else {
+            $siteSettings = session('settings', $defaultSettings);
+        }
 
         return [
             ...parent::share($request),

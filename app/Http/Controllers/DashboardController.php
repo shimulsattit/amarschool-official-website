@@ -307,30 +307,28 @@ class DashboardController extends Controller
 
     private function getSettings(): array
     {
-        return Cache::remember('site_settings_cache', 86400, function () {
-            $defaultSettings = [
-                'site_name' => 'Amar School',
-                'tagline' => 'Education Management System',
-                'support_phone' => '+88 01716 282 884',
-                'support_email' => 'support@amarschool.com',
-                'address' => 'Dhaka, Bangladesh',
-                'facebook_url' => 'https://facebook.com/amarschool',
-                'whatsapp_number' => '+8801716282884',
-                'logo_url' => null,
-                'footer_logo_url' => null,
-                'favicon_url' => null,
-            ];
+        $defaultSettings = [
+            'site_name' => 'Amar School',
+            'tagline' => 'Education Management System',
+            'support_phone' => '+88 01716 282 884',
+            'support_email' => 'support@amarschool.com',
+            'address' => 'Dhaka, Bangladesh',
+            'facebook_url' => 'https://facebook.com/amarschool',
+            'whatsapp_number' => '+8801716282884',
+            'logo_url' => null,
+            'footer_logo_url' => null,
+            'favicon_url' => null,
+        ];
 
-            $path = storage_path('app/site_settings.json');
-            if (File::exists($path)) {
-                $json = json_decode(File::get($path), true);
-                if (is_array($json)) {
-                    return array_merge($defaultSettings, $json);
-                }
+        $path = storage_path('app/site_settings.json');
+        if (File::exists($path)) {
+            $json = json_decode(File::get($path), true);
+            if (is_array($json)) {
+                return array_merge($defaultSettings, $json);
             }
+        }
 
-            return session('settings', $defaultSettings);
-        });
+        return session('settings', $defaultSettings);
     }
 
     private function saveSettings(array $settings): void
@@ -342,32 +340,29 @@ class DashboardController extends Controller
         }
         File::put($path, json_encode($settings, JSON_PRETTY_PRINT));
         session(['settings' => $settings]);
-        Cache::forget('site_settings_cache');
     }
 
     private function getMenuItems(): array
     {
-        return Cache::remember('site_menu_items_cache', 86400, function () {
-            $defaultMenuItems = [
-                ['id' => 1, 'title' => 'Home', 'label' => 'Home', 'url' => '/', 'to' => '/', 'location' => 'Header & Footer', 'order' => 1, 'active' => true],
-                ['id' => 2, 'title' => 'About', 'label' => 'About', 'url' => '/about', 'to' => '/about', 'location' => 'Header & Footer', 'order' => 2, 'active' => true],
-                ['id' => 3, 'title' => 'Features', 'label' => 'Features', 'url' => '/features', 'to' => '/features', 'location' => 'Header & Footer', 'order' => 3, 'active' => true],
-                ['id' => 4, 'title' => 'ID Card', 'label' => 'ID Card', 'url' => '/id_card', 'to' => '/id_card', 'location' => 'Header & Footer', 'order' => 4, 'active' => true],
-                ['id' => 5, 'title' => 'Web Development', 'label' => 'Web Development', 'url' => '/web-development', 'to' => '/web-development', 'location' => 'Header & Footer', 'order' => 5, 'active' => true],
-                ['id' => 6, 'title' => 'Graphics Design', 'label' => 'Graphics Design', 'url' => '/graphics-design-service', 'to' => '/graphics-design-service', 'location' => 'Header & Footer', 'order' => 6, 'active' => true],
-                ['id' => 7, 'title' => 'Contact Us', 'label' => 'Contact Us', 'url' => '/contact-us', 'to' => '/contact-us', 'location' => 'Header & Footer', 'order' => 7, 'active' => true],
-            ];
+        $defaultMenuItems = [
+            ['id' => 1, 'title' => 'Home', 'label' => 'Home', 'url' => '/', 'to' => '/', 'location' => 'Header & Footer', 'order' => 1, 'active' => true],
+            ['id' => 2, 'title' => 'About', 'label' => 'About', 'url' => '/about', 'to' => '/about', 'location' => 'Header & Footer', 'order' => 2, 'active' => true],
+            ['id' => 3, 'title' => 'Features', 'label' => 'Features', 'url' => '/features', 'to' => '/features', 'location' => 'Header & Footer', 'order' => 3, 'active' => true],
+            ['id' => 4, 'title' => 'ID Card', 'label' => 'ID Card', 'url' => '/id_card', 'to' => '/id_card', 'location' => 'Header & Footer', 'order' => 4, 'active' => true],
+            ['id' => 5, 'title' => 'Web Development', 'label' => 'Web Development', 'url' => '/web-development', 'to' => '/web-development', 'location' => 'Header & Footer', 'order' => 5, 'active' => true],
+            ['id' => 6, 'title' => 'Graphics Design', 'label' => 'Graphics Design', 'url' => '/graphics-design-service', 'to' => '/graphics-design-service', 'location' => 'Header & Footer', 'order' => 6, 'active' => true],
+            ['id' => 7, 'title' => 'Contact Us', 'label' => 'Contact Us', 'url' => '/contact-us', 'to' => '/contact-us', 'location' => 'Header & Footer', 'order' => 7, 'active' => true],
+        ];
 
-            $path = storage_path('app/menu_items.json');
-            if (File::exists($path)) {
-                $json = json_decode(File::get($path), true);
-                if (is_array($json) && count($json) > 0) {
-                    return $json;
-                }
+        $path = storage_path('app/menu_items.json');
+        if (File::exists($path)) {
+            $json = json_decode(File::get($path), true);
+            if (is_array($json) && count($json) > 0) {
+                return $json;
             }
+        }
 
-            return session('menu_items', $defaultMenuItems);
-        });
+        return session('menu_items', $defaultMenuItems);
     }
 
     private function saveMenuItems(array $menuItems): void
@@ -379,7 +374,6 @@ class DashboardController extends Controller
         }
         File::put($path, json_encode($menuItems, JSON_PRETTY_PRINT));
         session(['menu_items' => $menuItems]);
-        Cache::forget('site_menu_items_cache');
     }
 
     /**
@@ -528,16 +522,14 @@ class DashboardController extends Controller
             ],
         ];
 
-        return Cache::remember('site_pages_content', 86400, function () use ($defaultPages) {
-            $path = storage_path('app/pages_content.json');
-            if (File::exists($path)) {
-                $json = json_decode(File::get($path), true);
-                if (is_array($json) && count($json) > 0) {
-                    return $json;
-                }
+        $path = storage_path('app/pages_content.json');
+        if (File::exists($path)) {
+            $json = json_decode(File::get($path), true);
+            if (is_array($json) && count($json) > 0) {
+                return $json;
             }
+        }
 
-            return $defaultPages;
-        });
+        return $defaultPages;
     }
 }
