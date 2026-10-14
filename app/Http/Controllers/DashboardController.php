@@ -168,7 +168,8 @@ class DashboardController extends Controller
     public function updateMenu(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'items' => ['required', 'array'],
+            'items' => ['present', 'array'],
+            'items.*.id' => ['nullable'],
             'items.*.title' => ['required', 'string', 'max:255'],
             'items.*.url' => ['required', 'string', 'max:255'],
             'items.*.location' => ['required', 'string', 'max:50'],
@@ -176,9 +177,10 @@ class DashboardController extends Controller
             'items.*.active' => ['required', 'boolean'],
         ]);
 
-        $formattedItems = array_map(function ($item) {
+        $items = array_values($validated['items']);
+        $formattedItems = array_map(function ($item, $index) {
             return [
-                'id' => $item['id'] ?? time(),
+                'id' => isset($item['id']) ? (int) $item['id'] : ($index + 1),
                 'title' => $item['title'],
                 'label' => $item['title'],
                 'url' => $item['url'],
@@ -187,7 +189,7 @@ class DashboardController extends Controller
                 'order' => (int) $item['order'],
                 'active' => (bool) $item['active'],
             ];
-        }, $validated['items']);
+        }, $items, array_keys($items));
 
         $this->saveMenuItems($formattedItems);
 

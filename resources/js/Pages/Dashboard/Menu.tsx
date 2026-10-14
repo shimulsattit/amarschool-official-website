@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { router } from "@inertiajs/react";
 import DashboardLayout from "@/Layouts/DashboardLayout";
 import { Menu as MenuIcon, Plus, GripVertical, Edit3, Trash2, X, Save, CheckCircle2 } from "lucide-react";
@@ -17,10 +17,16 @@ interface Props {
 }
 
 export default function Menu({ menuItems: initialMenuItems }: Props) {
-  const [itemsList, setItemsList] = useState<MenuItem[]>(initialMenuItems);
+  const [itemsList, setItemsList] = useState<MenuItem[]>(initialMenuItems || []);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (initialMenuItems) {
+      setItemsList(initialMenuItems);
+    }
+  }, [initialMenuItems]);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -61,9 +67,14 @@ export default function Menu({ menuItems: initialMenuItems }: Props) {
       { items: newItems },
       {
         preserveState: true,
+        preserveScroll: true,
         onSuccess: () => {
           setSuccessMessage(message);
           setTimeout(() => setSuccessMessage(null), 4000);
+        },
+        onError: (errors) => {
+          console.error("Menu update error:", errors);
+          alert("Failed to save menu items. Please check values.");
         },
       }
     );
