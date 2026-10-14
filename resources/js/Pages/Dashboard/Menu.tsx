@@ -125,6 +125,21 @@ export default function Menu({ menuItems: initialMenuItems }: Props) {
     }
   };
 
+  const handleRestoreDefaults = () => {
+    if (confirm("Restore all default menus (Home, About, Features, ID Card, Web Dev, Graphics, Contact Us)?")) {
+      const defaults: MenuItem[] = [
+        { id: 1, title: "Home", url: "/", location: "Header & Footer", order: 1, active: true },
+        { id: 2, title: "About", url: "/about", location: "Header & Footer", order: 2, active: true },
+        { id: 3, title: "Features", url: "/features", location: "Header & Footer", order: 3, active: true },
+        { id: 4, title: "ID Card", url: "/id_card", location: "Header & Footer", order: 4, active: true },
+        { id: 5, title: "Web Development", url: "/web-development", location: "Header & Footer", order: 5, active: true },
+        { id: 6, title: "Graphics Design", url: "/graphics-design-service", location: "Header & Footer", order: 6, active: true },
+        { id: 7, title: "Contact Us", url: "/contact-us", location: "Header & Footer", order: 7, active: true },
+      ];
+      persistMenuItems(defaults, "Default menu items restored successfully!");
+    }
+  };
+
   return (
     <DashboardLayout title="Menu Management">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
@@ -135,13 +150,22 @@ export default function Menu({ menuItems: initialMenuItems }: Props) {
           </p>
         </div>
 
-        <button
-          onClick={handleOpenAddModal}
-          className="flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
-        >
-          <Plus className="h-4 w-4" />
-          Add Menu Item
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleRestoreDefaults}
+            className="flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 text-xs font-semibold text-foreground shadow-xs hover:bg-secondary"
+          >
+            Restore Default Menus
+          </button>
+          <button
+            onClick={handleOpenAddModal}
+            className="flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+          >
+            <Plus className="h-4 w-4" />
+            Add Menu Item
+          </button>
+        </div>
       </div>
 
       {successMessage && (
@@ -165,57 +189,66 @@ export default function Menu({ menuItems: initialMenuItems }: Props) {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {itemsList.map((item) => (
-                <tr key={item.id} className="hover:bg-muted/20">
-                  <td className="px-4 py-4 text-center">
-                    <div className="inline-flex items-center gap-1 font-bold text-muted-foreground">
-                      <GripVertical className="h-4 w-4 cursor-grab text-muted-foreground/60" />
-                      #{item.order}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 font-semibold text-brand-deep">
-                    <div className="flex items-center gap-2">
-                      <MenuIcon className="h-4 w-4 text-primary" />
-                      {item.title}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 font-mono text-xs text-muted-foreground">
-                    {item.url}
-                  </td>
-                  <td className="px-6 py-4 text-muted-foreground">
-                    {item.location}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
-                        item.active
-                          ? "bg-emerald-500/15 text-emerald-600"
-                          : "bg-gray-100 text-gray-600"
-                      }`}
-                    >
-                      {item.active ? "Visible" : "Hidden"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-1">
-                      <button
-                        onClick={() => handleOpenEditModal(item)}
-                        className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
-                        title="Edit Menu Item"
-                      >
-                        <Edit3 className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteItem(item.id, item.title)}
-                        className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
-                        title="Delete Menu Item"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
+              {itemsList.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-10 text-center text-muted-foreground">
+                    <p className="font-semibold text-sm">No menu items found.</p>
+                    <p className="text-xs mt-1">Click "Restore Default Menus" or "+ Add Menu Item" to configure links.</p>
                   </td>
                 </tr>
-              ))}
+              ) : (
+                itemsList.map((item) => (
+                  <tr key={item.id} className="hover:bg-muted/20">
+                    <td className="px-4 py-4 text-center">
+                      <div className="inline-flex items-center gap-1 font-bold text-muted-foreground">
+                        <GripVertical className="h-4 w-4 cursor-grab text-muted-foreground/60" />
+                        #{item.order}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 font-semibold text-brand-deep">
+                      <div className="flex items-center gap-2">
+                        <MenuIcon className="h-4 w-4 text-primary" />
+                        {item.title}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 font-mono text-xs text-muted-foreground">
+                      {item.url}
+                    </td>
+                    <td className="px-6 py-4 text-muted-foreground">
+                      {item.location}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+                          item.active
+                            ? "bg-emerald-500/15 text-emerald-600"
+                            : "bg-gray-100 text-gray-600"
+                        }`}
+                      >
+                        {item.active ? "Visible" : "Hidden"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <button
+                          onClick={() => handleOpenEditModal(item)}
+                          className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+                          title="Edit Menu Item"
+                        >
+                          <Edit3 className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteItem(item.id, item.title)}
+                          className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+                          title="Delete Menu Item"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

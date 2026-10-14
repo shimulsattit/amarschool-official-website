@@ -61,7 +61,7 @@ class HandleInertiaRequests extends Middleware
         $menuPath = storage_path('app/menu_items.json');
         if (\Illuminate\Support\Facades\File::exists($menuPath)) {
             $jsonMenu = json_decode(\Illuminate\Support\Facades\File::get($menuPath), true);
-            if (is_array($jsonMenu)) {
+            if (is_array($jsonMenu) && count($jsonMenu) > 0) {
                 $menuItems = $jsonMenu;
             }
         } else {

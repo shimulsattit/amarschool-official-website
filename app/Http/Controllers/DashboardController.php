@@ -319,15 +319,16 @@ class DashboardController extends Controller
             ['id' => 1, 'title' => 'Home', 'label' => 'Home', 'url' => '/', 'to' => '/', 'location' => 'Header & Footer', 'order' => 1, 'active' => true],
             ['id' => 2, 'title' => 'About', 'label' => 'About', 'url' => '/about', 'to' => '/about', 'location' => 'Header & Footer', 'order' => 2, 'active' => true],
             ['id' => 3, 'title' => 'Features', 'label' => 'Features', 'url' => '/features', 'to' => '/features', 'location' => 'Header & Footer', 'order' => 3, 'active' => true],
-            ['id' => 4, 'title' => 'ID Card', 'label' => 'ID Card', 'url' => '/id-card', 'to' => '/id-card', 'location' => 'Header & Footer', 'order' => 4, 'active' => true],
-            ['id' => 5, 'title' => 'Web Development', 'label' => 'Web Development', 'url' => '/services/web-development', 'to' => '/services/web-development', 'location' => 'Header & Footer', 'order' => 5, 'active' => true],
-            ['id' => 6, 'title' => 'Graphics Design', 'label' => 'Graphics Design', 'url' => '/services/graphics-design', 'to' => '/services/graphics-design', 'location' => 'Header & Footer', 'order' => 6, 'active' => true],
+            ['id' => 4, 'title' => 'ID Card', 'label' => 'ID Card', 'url' => '/id_card', 'to' => '/id_card', 'location' => 'Header & Footer', 'order' => 4, 'active' => true],
+            ['id' => 5, 'title' => 'Web Development', 'label' => 'Web Development', 'url' => '/web-development', 'to' => '/web-development', 'location' => 'Header & Footer', 'order' => 5, 'active' => true],
+            ['id' => 6, 'title' => 'Graphics Design', 'label' => 'Graphics Design', 'url' => '/graphics-design-service', 'to' => '/graphics-design-service', 'location' => 'Header & Footer', 'order' => 6, 'active' => true],
+            ['id' => 7, 'title' => 'Contact Us', 'label' => 'Contact Us', 'url' => '/contact-us', 'to' => '/contact-us', 'location' => 'Header & Footer', 'order' => 7, 'active' => true],
         ];
 
         $path = storage_path('app/menu_items.json');
         if (File::exists($path)) {
             $json = json_decode(File::get($path), true);
-            if (is_array($json)) {
+            if (is_array($json) && count($json) > 0) {
                 return $json;
             }
         }
