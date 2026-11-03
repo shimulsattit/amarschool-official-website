@@ -1,4 +1,4 @@
-import { Head } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import { SiteLayout, PageHero, SectionTitle, BookMeetingBar } from "@/components/site/SiteLayout";
 import idImg from "@/assets/id-cards.png";
 import { QrCode, Printer, Palette, ShieldCheck } from "lucide-react";
@@ -30,27 +30,48 @@ interface SampleItem {
   image_url?: string | null;
 }
 
+interface SiteSettings {
+  support_phone?: string;
+  whatsapp_number?: string;
+}
+
 interface Props {
   pageContent?: {
     heroHeading?: string;
     heroDescription?: string;
+    serviceTitle?: string;
+    serviceDescription?: string;
+    serviceImageUrl?: string | null;
+    galleryKicker?: string;
+    galleryTitle?: string;
+    bookingButtonText?: string;
+    bookingPhone?: string;
+    bookingUrl?: string;
     samples?: SampleItem[];
   };
   samples?: SampleItem[];
 }
 
 export default function IdCard({ pageContent, samples: propsSamples }: Props) {
+  const { props } = usePage<{ siteSettings?: SiteSettings }>();
+  const siteSettings = props.siteSettings || {};
+
   const activeSamples = propsSamples && propsSamples.length > 0
     ? propsSamples
     : (pageContent?.samples && pageContent.samples.length > 0 ? pageContent.samples : []);
 
+  const serviceImg = pageContent?.serviceImageUrl || idImg;
+  const bookingPhone = pageContent?.bookingPhone || siteSettings.support_phone || "01738737668";
+  const bookingButtonText = pageContent?.bookingButtonText || "Book Meeting";
+  const bookingUrl = pageContent?.bookingUrl;
+
   return (
     <SiteLayout>
       <Head>
-        <title>School ID Card Design & Printing — Amar School</title>
+        <title>{pageContent?.heroHeading || "School ID Card Design & Printing"} — Amar School</title>
         <meta
           name="description"
-          content="Ready made school and college ID card designs with QR code, barcode and biometric support. Bulk design and printing from Amar School."
+          content={pageContent?.heroDescription || "Ready made school and college ID card designs with QR code, barcode and biometric support. Bulk design and printing from Amar School."}
         />
       </Head>
 
@@ -63,19 +84,20 @@ export default function IdCard({ pageContent, samples: propsSamples }: Props) {
       <section className="py-20">
         <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 lg:grid-cols-2">
           <img
-            src={idImg}
+            src={serviceImg}
             alt="Sample school ID cards with lanyard and QR code"
             width={1000}
             height={750}
             loading="lazy"
-            className="w-full rounded-2xl shadow-lg"
+            className="w-full rounded-2xl shadow-lg object-contain bg-muted/20"
           />
           <div>
-            <h2 className="text-3xl font-bold text-primary">ID Card Design Service</h2>
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-              An ID card is the identity of your institute. Amarschool designs and prints student,
-              teacher and staff cards that match your branding — and connects them to attendance,
-              library and gate access through QR, barcode or RFID.
+            <h2 className="text-3xl font-bold text-primary">
+              {pageContent?.serviceTitle || "ID Card Design Service"}
+            </h2>
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground whitespace-pre-line">
+              {pageContent?.serviceDescription ||
+                "An ID card is the identity of your institute. Amarschool designs and prints student, teacher and staff cards that match your branding — and connects them to attendance, library and gate access through QR, barcode or RFID."}
             </p>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               {perks.map(([Icon, title, body]) => (
@@ -92,7 +114,9 @@ export default function IdCard({ pageContent, samples: propsSamples }: Props) {
 
       <section className="bg-secondary/50 py-20">
         <div className="mx-auto max-w-7xl px-6">
-          <SectionTitle kicker="Gallery">ID Card Designs</SectionTitle>
+          <SectionTitle kicker={pageContent?.galleryKicker || "Gallery"}>
+            {pageContent?.galleryTitle || "ID Card Designs"}
+          </SectionTitle>
 
           {activeSamples && activeSamples.length > 0 ? (
             <div className="mt-12 grid gap-8 grid-cols-1 md:grid-cols-2">
@@ -207,7 +231,11 @@ export default function IdCard({ pageContent, samples: propsSamples }: Props) {
           )}
 
           <div className="mt-12">
-            <BookMeetingBar />
+            <BookMeetingBar
+              phone={bookingPhone}
+              buttonText={bookingButtonText}
+              href={bookingUrl}
+            />
           </div>
         </div>
       </section>

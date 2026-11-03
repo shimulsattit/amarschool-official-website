@@ -88,6 +88,20 @@ class DashboardController extends Controller
             }
         }
 
+        // Handle uploaded ID Card service banner image
+        if ($request->hasFile('id_card_service_image')) {
+            $file = $request->file('id_card_service_image');
+            if ($file) {
+                $filename = 'id_card_service_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move($uploadPath, $filename);
+                foreach ($pages as &$page) {
+                    if (($page['slug'] ?? '') === '/id-card') {
+                        $page['content']['serviceImageUrl'] = '/uploads/' . $filename;
+                    }
+                }
+            }
+        }
+
         if ($request->hasFile('sample_front_images')) {
             foreach ($request->file('sample_front_images') as $sampleIndex => $file) {
                 if ($file) {
@@ -477,6 +491,14 @@ class DashboardController extends Controller
                 'content' => [
                     'heroHeading' => 'ID Card Design Service',
                     'heroDescription' => 'Professional student, teacher and staff ID card design for your institute.',
+                    'serviceTitle' => 'ID Card Design Service',
+                    'serviceDescription' => 'An ID card is the identity of your institute. Amarschool designs and prints student, teacher and staff cards that match your branding — and connects them to attendance, library and gate access through QR, barcode or RFID.',
+                    'serviceImageUrl' => null,
+                    'galleryKicker' => 'Gallery',
+                    'galleryTitle' => 'ID Card Designs',
+                    'bookingButtonText' => 'Book Meeting',
+                    'bookingPhone' => '01738737668',
+                    'bookingUrl' => null,
                     'samples' => [
                         [
                             'id' => 1,

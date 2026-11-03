@@ -20,6 +20,7 @@ import {
   ArrowUp,
   Upload,
   Image as ImageIcon,
+  Phone,
 } from "lucide-react";
 
 interface ModuleItem {
@@ -34,6 +35,8 @@ interface SampleItem {
   id?: number;
   title: string;
   image_url?: string | null;
+  front_image_url?: string | null;
+  back_image_url?: string | null;
 }
 
 interface PageContent {
@@ -53,6 +56,15 @@ interface PageContent {
   faqTitle?: string;
   modules?: ModuleItem[];
   samples?: SampleItem[];
+  // ID Card specific fields
+  serviceTitle?: string;
+  serviceDescription?: string;
+  serviceImageUrl?: string | null;
+  galleryKicker?: string;
+  galleryTitle?: string;
+  bookingButtonText?: string;
+  bookingPhone?: string;
+  bookingUrl?: string;
 }
 
 interface PageItem {
@@ -139,6 +151,23 @@ export default function Pages({ pages: initialPages }: Props) {
   const [sampleFrontFiles, setSampleFrontFiles] = useState<{ [key: number]: File }>({});
   const [sampleBackFiles, setSampleBackFiles] = useState<{ [key: number]: File }>({});
   const [appBannerFile, setAppBannerFile] = useState<File | null>(null);
+  const [idCardServiceFile, setIdCardServiceFile] = useState<File | null>(null);
+
+  const handleIdCardServiceImageChange = (file: File | null) => {
+    if (!file) return;
+    setIdCardServiceFile(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setFormData((prev) => ({
+        ...prev,
+        content: {
+          ...prev.content,
+          serviceImageUrl: e.target?.result as string,
+        },
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
 
   useEffect(() => {
     if (isModalOpen) {
@@ -166,6 +195,7 @@ export default function Pages({ pages: initialPages }: Props) {
     setSampleFrontFiles({});
     setSampleBackFiles({});
     setAppBannerFile(null);
+    setIdCardServiceFile(null);
     setActiveTab("general");
     setFormData({
       title: "",
@@ -184,6 +214,7 @@ export default function Pages({ pages: initialPages }: Props) {
     setSampleFrontFiles({});
     setSampleBackFiles({});
     setAppBannerFile(null);
+    setIdCardServiceFile(null);
     const existingModules = page.content.modules && page.content.modules.length > 0 ? page.content.modules : defaultModules;
     const existingSamples = page.content.samples && page.content.samples.length > 0 ? page.content.samples : defaultSamples;
     
@@ -384,6 +415,10 @@ export default function Pages({ pages: initialPages }: Props) {
 
     if (appBannerFile) {
       postData.append("app_banner_image", appBannerFile);
+    }
+
+    if (idCardServiceFile) {
+      postData.append("id_card_service_image", idCardServiceFile);
     }
 
     Object.entries(sampleFrontFiles).forEach(([index, file]) => {
@@ -877,6 +912,282 @@ export default function Pages({ pages: initialPages }: Props) {
                         <option value="Published">Published</option>
                         <option value="Draft">Draft</option>
                       </select>
+                    </div>
+                  </div>
+                ) : formData.slug === "/id-card" ? (
+                  <div className="space-y-6">
+                    {/* ID Card Hero Section */}
+                    <div className="rounded-xl border border-border bg-background p-5 space-y-4">
+                      <div className="flex items-center gap-2 border-b border-border pb-2">
+                        <Layout className="h-4 w-4 text-primary" />
+                        <h4 className="text-sm font-bold text-brand-deep">1. Hero Section (শীর্ষ ব্যানার)</h4>
+                      </div>
+
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="sm:col-span-2">
+                          <label className="block text-[11px] font-semibold text-muted-foreground uppercase">
+                            Main Heading Title (মূল শিরোনাম)
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.content.heroHeading || ""}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                content: { ...formData.content, heroHeading: e.target.value },
+                              })
+                            }
+                            placeholder="ID Card Design Service"
+                            className="mt-1 w-full rounded-lg border border-input bg-card py-2 px-3 text-xs font-semibold focus:border-primary"
+                          />
+                        </div>
+
+                        <div className="sm:col-span-2">
+                          <label className="block text-[11px] font-semibold text-muted-foreground uppercase">
+                            Hero Subtitle / Description Paragraph (সাবটাইটেল / বিবরণ)
+                          </label>
+                          <textarea
+                            rows={2}
+                            value={formData.content.heroDescription || ""}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                content: { ...formData.content, heroDescription: e.target.value },
+                              })
+                            }
+                            placeholder="Professional student, teacher and staff ID card design for your institute."
+                            className="mt-1 w-full rounded-lg border border-input bg-card py-2 px-3 text-xs focus:border-primary"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* ID Card Booking & Mobile Number Bar (খুব গুরুত্বপূর্ণ) */}
+                    <div className="rounded-xl border-2 border-primary/40 bg-primary/5 p-5 space-y-4 shadow-xs">
+                      <div className="flex items-center justify-between border-b border-primary/20 pb-2">
+                        <div className="flex items-center gap-2">
+                          <Phone className="h-4 w-4 text-primary" />
+                          <h4 className="text-sm font-bold text-primary">
+                            2. Booking Button & Mobile Number (বুকিং বাটন ও মোবাইল নম্বর)
+                          </h4>
+                        </div>
+                        <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold text-primary uppercase">
+                          Live on Page
+                        </span>
+                      </div>
+
+                      <p className="text-xs text-muted-foreground">
+                        আইডি কার্ড পেজের নিচে প্রদর্শিত <strong>"Book Meeting"</strong> বাটনের টেক্সট এবং মোবাইল নম্বর এখান থেকে পরিবর্তন করতে পারেন। গ্রাহক ক্লিক করলে সরাসরি কল সংযোগ হবে।
+                      </p>
+
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <label className="block text-[11px] font-bold text-brand-deep uppercase">
+                            Booking Mobile / Phone Number (মোবাইল নম্বর)
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.content.bookingPhone || ""}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                content: { ...formData.content, bookingPhone: e.target.value },
+                              })
+                            }
+                            placeholder="e.g. 01738737668 (খালি রাখলে সাইট সেটিংসের সাপোর্ট নম্বর ব্যবহার হবে)"
+                            className="mt-1 w-full rounded-lg border border-input bg-background py-2 px-3 text-xs font-bold text-foreground focus:border-primary"
+                          />
+                          <span className="mt-1 inline-block text-[10px] text-muted-foreground">
+                            টিপস: খালি রাখলে সাইট সেটিংসের সাপোর্ট ফোন নম্বর স্বয়ংক্রিয়ভাবে ব্যবহার হবে।
+                          </span>
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-bold text-brand-deep uppercase">
+                            Button Text (বাটন টেক্সট)
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.content.bookingButtonText || ""}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                content: { ...formData.content, bookingButtonText: e.target.value },
+                              })
+                            }
+                            placeholder="Book Meeting"
+                            className="mt-1 w-full rounded-lg border border-input bg-background py-2 px-3 text-xs font-bold text-foreground focus:border-primary"
+                          />
+                          <span className="mt-1 inline-block text-[10px] text-muted-foreground">
+                            ডিফল্ট: Book Meeting (বা চাইলে 'কল করুন' / 'যোগাযোগ')
+                          </span>
+                        </div>
+
+                        <div className="sm:col-span-2">
+                          <label className="block text-[11px] font-semibold text-muted-foreground uppercase">
+                            Direct Link / WhatsApp URL (অপশনাল - সরাসরি লিঙ্ক)
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.content.bookingUrl || ""}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                content: { ...formData.content, bookingUrl: e.target.value },
+                              })
+                            }
+                            placeholder="খালি রাখলে স্বয়ংক্রিয়ভাবে tel: নম্বর ডায়াল হবে, অথবা চাইলে https://wa.me/8801738737668 দিতে পারেন"
+                            className="mt-1 w-full rounded-lg border border-input bg-background py-2 px-3 text-xs font-mono focus:border-primary"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* ID Card Service Details Section */}
+                    <div className="rounded-xl border border-border bg-background p-5 space-y-4">
+                      <div className="flex items-center gap-2 border-b border-border pb-2">
+                        <Type className="h-4 w-4 text-primary" />
+                        <h4 className="text-sm font-bold text-brand-deep">3. Service Details & Banner (সার্ভিস বিবরণ ও ব্যানার)</h4>
+                      </div>
+
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="sm:col-span-2">
+                          <label className="block text-[11px] font-semibold text-muted-foreground uppercase">
+                            Service Section Heading (সার্ভিস শিরোনাম)
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.content.serviceTitle || ""}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                content: { ...formData.content, serviceTitle: e.target.value },
+                              })
+                            }
+                            placeholder="ID Card Design Service"
+                            className="mt-1 w-full rounded-lg border border-input bg-card py-2 px-3 text-xs font-semibold focus:border-primary"
+                          />
+                        </div>
+
+                        <div className="sm:col-span-2">
+                          <label className="block text-[11px] font-semibold text-muted-foreground uppercase">
+                            Service Description (সার্ভিস বিবরণ)
+                          </label>
+                          <textarea
+                            rows={3}
+                            value={formData.content.serviceDescription || ""}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                content: { ...formData.content, serviceDescription: e.target.value },
+                              })
+                            }
+                            placeholder="An ID card is the identity of your institute. Amarschool designs and prints student, teacher and staff cards that match your branding..."
+                            className="mt-1 w-full rounded-lg border border-input bg-card py-2 px-3 text-xs focus:border-primary"
+                          />
+                        </div>
+
+                        {/* Service Banner Image Upload */}
+                        <div className="sm:col-span-2">
+                          <label className="block text-[11px] font-semibold text-muted-foreground uppercase mb-2">
+                            Service Banner Image (সার্ভিস ব্যানার ছবি)
+                          </label>
+                          <div className="flex flex-wrap items-center gap-4 rounded-xl border border-border/80 bg-muted/20 p-4">
+                            <div className="h-28 w-44 shrink-0 overflow-hidden rounded-lg border border-border bg-card p-1 text-center flex items-center justify-center">
+                              {formData.content.serviceImageUrl ? (
+                                <img
+                                  src={formData.content.serviceImageUrl}
+                                  alt="Service Banner"
+                                  className="h-full w-full object-contain"
+                                />
+                              ) : (
+                                <div className="text-[10px] text-muted-foreground">Default ID Card Image</div>
+                              )}
+                            </div>
+                            <div className="space-y-2">
+                              <label className="inline-flex items-center gap-2 rounded-lg bg-primary/10 px-3 py-2 text-xs font-semibold text-primary hover:bg-primary/20 cursor-pointer transition-colors">
+                                <Upload className="h-3.5 w-3.5" />
+                                <span>Upload Custom Banner</span>
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  className="hidden"
+                                  onChange={(e) => handleIdCardServiceImageChange(e.target.files?.[0] || null)}
+                                />
+                              </label>
+                              {formData.content.serviceImageUrl && (
+                                <div>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setIdCardServiceFile(null);
+                                      setFormData({
+                                        ...formData,
+                                        content: { ...formData.content, serviceImageUrl: null },
+                                      });
+                                    }}
+                                    className="text-[11px] text-destructive hover:underline"
+                                  >
+                                    Reset to Default Image
+                                  </button>
+                                </div>
+                              )}
+                              <p className="text-[10px] text-muted-foreground">
+                                Recommended size: 1000x750 px (PNG or WebP)
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* ID Card Gallery Header Section */}
+                    <div className="rounded-xl border border-border bg-background p-5 space-y-4">
+                      <div className="flex items-center gap-2 border-b border-border pb-2">
+                        <ImageIcon className="h-4 w-4 text-primary" />
+                        <h4 className="text-sm font-bold text-brand-deep">4. Gallery Section Header (গ্যালারি টেক্সট)</h4>
+                      </div>
+
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <label className="block text-[11px] font-semibold text-muted-foreground uppercase">
+                            Gallery Kicker / Subtitle
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.content.galleryKicker || ""}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                content: { ...formData.content, galleryKicker: e.target.value },
+                              })
+                            }
+                            placeholder="Gallery"
+                            className="mt-1 w-full rounded-lg border border-input bg-card py-2 px-3 text-xs focus:border-primary"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-semibold text-muted-foreground uppercase">
+                            Gallery Heading Title
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.content.galleryTitle || ""}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                content: { ...formData.content, galleryTitle: e.target.value },
+                              })
+                            }
+                            placeholder="ID Card Designs"
+                            className="mt-1 w-full rounded-lg border border-input bg-card py-2 px-3 text-xs font-semibold focus:border-primary"
+                          />
+                        </div>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground">
+                        নোট: কার্ডের নমুনা ও ফ্রন্ট/ব্যাক ছবি যোগ বা পরিবর্তন করতে উপরের <strong>"ID Card Design Samples"</strong> ট্যাবে যান।
+                      </p>
                     </div>
                   </div>
                 ) : (

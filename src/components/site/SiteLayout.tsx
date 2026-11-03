@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { usePage } from "@inertiajs/react";
 import { SiteHeader } from "./SiteHeader";
 import { SiteFooter } from "./SiteFooter";
 
@@ -48,17 +49,56 @@ export function SectionTitle({ children, kicker }: { children: ReactNode; kicker
   );
 }
 
-export function BookMeetingBar() {
+interface BookMeetingBarProps {
+  phone?: string;
+  buttonText?: string;
+  href?: string;
+}
+
+export function BookMeetingBar({
+  phone,
+  buttonText = "Book Meeting",
+  href,
+}: BookMeetingBarProps = {}) {
+  let fallbackPhone = "01738737668";
+  try {
+    const page = usePage<{ siteSettings?: { support_phone?: string } }>();
+    if (page?.props?.siteSettings?.support_phone) {
+      fallbackPhone = page.props.siteSettings.support_phone;
+    }
+  } catch {
+    // outside of Inertia context
+  }
+
+  const displayPhone = phone || fallbackPhone;
+  const cleanPhone = displayPhone.replace(/[^0-9+]/g, "");
+  const targetHref = href || (cleanPhone ? `tel:${cleanPhone}` : undefined);
+
   return (
     <div className="flex justify-center">
-      <div className="flex items-center overflow-hidden rounded-md shadow-[var(--shadow-card)]">
-        <span className="bg-accent px-6 py-3 text-sm font-bold text-accent-foreground">
-          Book Meeting
-        </span>
-        <span className="bg-primary px-6 py-3 text-sm font-bold text-primary-foreground">
-          01738737668
-        </span>
-      </div>
+      {targetHref ? (
+        <a
+          href={targetHref}
+          className="group flex items-center overflow-hidden rounded-md shadow-[var(--shadow-card)] transition-transform hover:scale-105 active:scale-95"
+          title={`Call ${displayPhone}`}
+        >
+          <span className="bg-accent px-6 py-3 text-sm font-bold text-accent-foreground group-hover:brightness-95 transition-all">
+            {buttonText}
+          </span>
+          <span className="bg-primary px-6 py-3 text-sm font-bold text-primary-foreground group-hover:brightness-110 transition-all">
+            {displayPhone}
+          </span>
+        </a>
+      ) : (
+        <div className="flex items-center overflow-hidden rounded-md shadow-[var(--shadow-card)]">
+          <span className="bg-accent px-6 py-3 text-sm font-bold text-accent-foreground">
+            {buttonText}
+          </span>
+          <span className="bg-primary px-6 py-3 text-sm font-bold text-primary-foreground">
+            {displayPhone}
+          </span>
+        </div>
+      )}
     </div>
   );
 }

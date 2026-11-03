@@ -126,7 +126,7 @@ function IdCard() {
             ))}
           </div>
           <div className="mt-12">
-            <BookMeetingBar />
+            <BookMeetingBar buttonText="Book Meeting" phone="01738737668" />
           </div>
         </div>
       </section>
