@@ -641,6 +641,69 @@ export default function Pages({ pages: initialPages }: Props) {
               <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 min-h-0">
                 {activeTab === "samples" ? (
                   <div className="space-y-6">
+                    {/* ID Card Booking & Mobile Number Bar (খুব গুরুত্বপূর্ণ - সবার উপরে) */}
+                    <div className="rounded-xl border-2 border-primary/40 bg-primary/5 p-5 space-y-4 shadow-xs">
+                      <div className="flex items-center justify-between border-b border-primary/20 pb-2">
+                        <div className="flex items-center gap-2">
+                          <Phone className="h-4 w-4 text-primary" />
+                          <h4 className="text-sm font-bold text-primary">
+                            Booking Button & Mobile Number (আইডি কার্ড পেজের বুকিং বাটন ও মোবাইল নম্বর)
+                          </h4>
+                        </div>
+                        <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold text-primary uppercase">
+                          Live on Page
+                        </span>
+                      </div>
+
+                      <p className="text-xs text-muted-foreground">
+                        আইডি কার্ড পেজের নিচে প্রদর্শিত <strong>"Book Meeting"</strong> বাটনের মোবাইল নম্বর এবং বাটন টেক্সট এখান থেকে পরিবর্তন করতে পারেন। ভিজিটর ক্লিক করলে এই নম্বরে সরাসরি কল সংযোগ হবে।
+                      </p>
+
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <label className="block text-[11px] font-bold text-brand-deep uppercase">
+                            Booking Mobile / Phone Number (মোবাইল নম্বর)
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.content.bookingPhone || ""}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                content: { ...formData.content, bookingPhone: e.target.value },
+                              })
+                            }
+                            placeholder="e.g. 01738737668 (খালি রাখলে সাইট সেটিংসের সাপোর্ট নম্বর ব্যবহার হবে)"
+                            className="mt-1 w-full rounded-lg border border-input bg-background py-2 px-3 text-xs font-bold text-foreground focus:border-primary"
+                          />
+                          <span className="mt-1 inline-block text-[10px] text-muted-foreground">
+                            টিপস: খালি রাখলে সাইট সেটিংসের সাপোর্ট ফোন নম্বর স্বয়ংক্রিয়ভাবে ব্যবহার হবে।
+                          </span>
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-bold text-brand-deep uppercase">
+                            Button Text (বাটন টেক্সট)
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.content.bookingButtonText || ""}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                content: { ...formData.content, bookingButtonText: e.target.value },
+                              })
+                            }
+                            placeholder="Book Meeting"
+                            className="mt-1 w-full rounded-lg border border-input bg-background py-2 px-3 text-xs font-bold text-foreground focus:border-primary"
+                          />
+                          <span className="mt-1 inline-block text-[10px] text-muted-foreground">
+                            ডিফল্ট: Book Meeting
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="flex items-center justify-between border-b border-border pb-3">
                       <div>
                         <h4 className="text-sm font-bold text-brand-deep">ID Card Design Samples ({formData.samples?.length || 0})</h4>
