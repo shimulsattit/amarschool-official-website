@@ -144,7 +144,7 @@ export default function Pages({ pages: initialPages }: Props) {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPage, setEditingPage] = useState<PageItem | null>(null);
-  const [activeTab, setActiveTab] = useState<"general" | "content" | "modules" | "samples">("content");
+  const [activeTab, setActiveTab] = useState<"general" | "content" | "modules" | "samples" | "booking">("content");
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [moduleSearch, setModuleSearch] = useState("");
@@ -208,7 +208,7 @@ export default function Pages({ pages: initialPages }: Props) {
     setIsModalOpen(true);
   };
 
-  const handleOpenEditModal = (page: PageItem) => {
+  const handleOpenEditModal = (page: PageItem, defaultTab?: "general" | "content" | "modules" | "samples" | "booking") => {
     setEditingPage(page);
     setModuleSearch("");
     setSampleFrontFiles({});
@@ -218,7 +218,11 @@ export default function Pages({ pages: initialPages }: Props) {
     const existingModules = page.content.modules && page.content.modules.length > 0 ? page.content.modules : defaultModules;
     const existingSamples = page.content.samples && page.content.samples.length > 0 ? page.content.samples : defaultSamples;
     
-    setActiveTab(page.slug === "/features" ? "modules" : page.slug === "/id-card" ? "samples" : "content");
+    if (defaultTab) {
+      setActiveTab(defaultTab);
+    } else {
+      setActiveTab(page.slug === "/features" ? "modules" : page.slug === "/id-card" ? "booking" : "content");
+    }
     setFormData({
       title: page.title,
       slug: page.slug,
@@ -531,9 +535,20 @@ export default function Pages({ pages: initialPages }: Props) {
                       >
                         <ExternalLink className="h-4 w-4" />
                       </a>
+                      {page.slug === "/id-card" && (
+                        <button
+                          type="button"
+                          onClick={() => handleOpenEditModal(page, "booking")}
+                          className="flex items-center gap-1.5 rounded-md bg-emerald-600 px-3 py-1 text-xs font-bold text-white shadow-xs transition-colors hover:bg-emerald-700 cursor-pointer"
+                          title="Change ID Card Booking Mobile Number"
+                        >
+                          <Phone className="h-3.5 w-3.5" />
+                          <span>মোবাইল নম্বর পরিবর্তন</span>
+                        </button>
+                      )}
                       <button
                         onClick={() => handleOpenEditModal(page)}
-                        className="flex items-center gap-1 rounded-md bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+                        className="flex items-center gap-1 rounded-md bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground cursor-pointer"
                         title="Edit Page Content & Core Modules"
                       >
                         <Edit3 className="h-3.5 w-3.5" />
@@ -579,6 +594,21 @@ export default function Pages({ pages: initialPages }: Props) {
 
             {/* Modal Tabs */}
             <div className="shrink-0 flex border-b border-border bg-muted/30 px-6 z-10">
+              {formData.slug === "/id-card" && (
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("booking")}
+                  className={`flex items-center gap-2 border-b-2 py-3 px-4 text-xs font-semibold transition-colors ${
+                    activeTab === "booking"
+                      ? "border-primary text-primary font-bold bg-card"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Phone className="h-4 w-4" />
+                  Booking Mobile No (মোবাইল নম্বর)
+                </button>
+              )}
+
               {formData.slug === "/id-card" && (
                 <button
                   type="button"
@@ -639,7 +669,113 @@ export default function Pages({ pages: initialPages }: Props) {
             {/* Modal Body */}
             <form onSubmit={handleSavePage} className="flex flex-1 flex-col overflow-hidden min-h-0">
               <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 min-h-0">
-                {activeTab === "samples" ? (
+                {activeTab === "booking" ? (
+                  <div className="space-y-6">
+                    <div className="rounded-2xl border-2 border-primary/50 bg-primary/5 p-6 space-y-6 shadow-sm">
+                      <div className="flex items-center justify-between border-b border-primary/20 pb-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md">
+                            <Phone className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <h3 className="text-base font-bold text-brand-deep">
+                              ID Card Page — Booking Button & Mobile Number
+                            </h3>
+                            <p className="text-xs text-muted-foreground">
+                              https://amarschool.co/id_card পেজের নিচের "Book Meeting" বাটনে যে মোবাইল নম্বরটি দেখাবে
+                            </p>
+                          </div>
+                        </div>
+                        <span className="rounded-full bg-emerald-600/10 px-3 py-1 text-xs font-bold text-emerald-600 border border-emerald-600/20">
+                          Active & Live
+                        </span>
+                      </div>
+
+                      {/* Live Button Preview */}
+                      <div className="rounded-xl border border-border bg-card p-5 text-center">
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                          Live Button Preview (পেজে যেমন দেখাবে):
+                        </p>
+                        <div className="flex justify-center">
+                          <div className="inline-flex items-center overflow-hidden rounded-md shadow-md">
+                            <span className="bg-[#E52D27] px-6 py-3 text-sm font-bold text-white">
+                              {formData.content.bookingButtonText || "Book Meeting"}
+                            </span>
+                            <span className="bg-[#0B63E5] px-6 py-3 text-sm font-bold text-white">
+                              {formData.content.bookingPhone || "01738737668"}
+                            </span>
+                          </div>
+                        </div>
+                        <p className="mt-2 text-[11px] text-muted-foreground">
+                          ভিজিটর এই বাটনে ক্লিক করলেই এই নম্বরে সরাসরি কল সংযোগ হবে
+                        </p>
+                      </div>
+
+                      <div className="grid gap-6 sm:grid-cols-2">
+                        <div className="space-y-2">
+                          <label className="block text-xs font-bold text-brand-deep uppercase">
+                            ১. Booking Mobile / Phone Number (মোবাইল নম্বর) *
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={formData.content.bookingPhone || ""}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                content: { ...formData.content, bookingPhone: e.target.value },
+                              })
+                            }
+                            placeholder="e.g. 01738737668"
+                            className="w-full rounded-xl border-2 border-primary/40 bg-background py-3 px-4 text-base font-bold text-primary focus:border-primary focus:outline-none"
+                          />
+                          <p className="text-[11px] text-muted-foreground">
+                            এখানে আপনার কাঙ্ক্ষিত মোবাইল নম্বরটি লিখুন। খালি রাখলে সাইট সেটিংসের সাপোর্ট নম্বর ব্যবহার হবে।
+                          </p>
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="block text-xs font-bold text-brand-deep uppercase">
+                            ২. Button Text (বাটন টেক্সট)
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.content.bookingButtonText || ""}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                content: { ...formData.content, bookingButtonText: e.target.value },
+                              })
+                            }
+                            placeholder="Book Meeting"
+                            className="w-full rounded-xl border border-input bg-background py-3 px-4 text-sm font-bold text-foreground focus:border-primary focus:outline-none"
+                          />
+                          <p className="text-[11px] text-muted-foreground">
+                            ডিফল্ট: <strong>Book Meeting</strong> (বা চাইলে 'কল করুন' / 'যোগাযোগ করুন' লিখতে পারেন)
+                          </p>
+                        </div>
+
+                        <div className="sm:col-span-2 space-y-2">
+                          <label className="block text-xs font-semibold text-muted-foreground uppercase">
+                            ৩. Direct Link / WhatsApp URL (অপশনাল - সরাসরি লিঙ্ক)
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.content.bookingUrl || ""}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                content: { ...formData.content, bookingUrl: e.target.value },
+                              })
+                            }
+                            placeholder="খালি রাখলে স্বয়ংক্রিয়ভাবে ফোনে কল ডায়াল হবে (tel:)। চাইলে WhatsApp লিঙ্কও দিতে পারেন: https://wa.me/8801738737668"
+                            className="w-full rounded-xl border border-input bg-background py-2.5 px-3 text-xs font-mono focus:border-primary focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : activeTab === "samples" ? (
                   <div className="space-y-6">
                     {/* ID Card Booking & Mobile Number Bar (খুব গুরুত্বপূর্ণ - সবার উপরে) */}
                     <div className="rounded-xl border-2 border-primary/40 bg-primary/5 p-5 space-y-4 shadow-xs">
