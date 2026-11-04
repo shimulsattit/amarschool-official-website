@@ -65,14 +65,16 @@ export default function IdCard({ pageContent, samples: propsSamples }: Props) {
   const bookingButtonText = pageContent?.bookingButtonText || "Book Meeting";
   const bookingUrl = pageContent?.bookingUrl;
 
+  const pageTitle = `${pageContent?.heroHeading || "School ID Card Design & Printing"} — Amar School`;
+  const metaDescription =
+    pageContent?.heroDescription ||
+    "Ready made school and college ID card designs with QR code, barcode and biometric support. Bulk design and printing from Amar School.";
+
   return (
     <SiteLayout>
       <Head>
-        <title>{pageContent?.heroHeading || "School ID Card Design & Printing"} — Amar School</title>
-        <meta
-          name="description"
-          content={pageContent?.heroDescription || "Ready made school and college ID card designs with QR code, barcode and biometric support. Bulk design and printing from Amar School."}
-        />
+        <title>{pageTitle}</title>
+        <meta name="description" content={metaDescription} />
       </Head>
 
       <PageHero
